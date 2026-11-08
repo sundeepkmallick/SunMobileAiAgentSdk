@@ -8,7 +8,6 @@ import com.google.mlkit.genai.agent.AgentRunner
 import com.google.mlkit.genai.common.FeatureStatus
 import com.google.mlkit.genai.prompt.Content
 import com.google.mlkit.genai.prompt.Generation
-import com.sunmobile.aiagent.core.Agent
 import com.sunmobile.aiagent.core.AgentBackendProvider
 import com.sunmobile.aiagent.core.AgentCapability
 import com.sunmobile.aiagent.core.AgentConfiguration
