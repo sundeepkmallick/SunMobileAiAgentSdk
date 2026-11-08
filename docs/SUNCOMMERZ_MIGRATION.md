@@ -10,7 +10,17 @@ While the SDK is still a local Git branch, consume it with a Gradle composite bu
 includeBuild("../SunMobileAiAgentSdk")
 ```
 
-Then add the SDK project dependencies using the actual included-build substitution coordinates, or use project dependencies if the SDK is temporarily included as subprojects. Once the SDK has a reviewed release, replace this local wiring with published Maven coordinates. No artifact has been published by this branch.
+The SDK root assigns group `com.sunmobile.aiagent` and version `0.1.0-SNAPSHOT`, so the composite build can substitute module coordinates automatically. Add the dependencies you need, for example:
+
+```kotlin
+dependencies {
+    implementation("com.sunmobile.aiagent:agent-core:0.1.0-SNAPSHOT")
+    implementation("com.sunmobile.aiagent:agent-adk:0.1.0-SNAPSHOT")
+    implementation("com.sunmobile.aiagent:agent-firebase:0.1.0-SNAPSHOT")
+}
+```
+
+Once the SDK has a reviewed release, replace this local wiring with published Maven coordinates. No artifact has been published by this branch.
 
 Avoid resolving duplicate ADK versions. The adapters currently pin the source app's observed ADK 1.0.0 baseline, LiteRT-LM 0.13.1, ML Kit Agent API 1.0.0-alpha1 and GenAI Prompt 1.0.0-beta5. Compare the resolved dependency graph before enabling the adapters.
 
