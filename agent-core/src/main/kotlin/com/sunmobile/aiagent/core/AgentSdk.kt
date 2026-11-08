@@ -1,12 +1,5 @@
 package com.sunmobile.aiagent.core
 
-import com.sunmobile.aiagent.core.policy.AgentPolicy
-import com.sunmobile.aiagent.core.policy.ToolAuthorization
-import com.sunmobile.aiagent.core.tool.AgentTool
-import com.sunmobile.aiagent.core.tool.ToolDefinition
-import com.sunmobile.aiagent.core.tool.ToolExecutionContext
-import com.sunmobile.aiagent.core.tool.ToolRegistry
-import com.sunmobile.aiagent.core.tool.ToolResult
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlinx.coroutines.flow.Flow
@@ -107,7 +100,11 @@ class AgentBuilder {
     suspend fun build(): Agent {
         val provider = requireNotNull(backend) { "A backend provider is required" }
         val config = requireNotNull(configuration) { "Agent configuration is required" }
-        return provider.createAgent(config, tools, policy)
+        val agent = provider.createAgent(config, tools, policy)
+        require(agent.capabilities.containsAll(provider.capabilities)) {
+            "Backend '${provider.backendId}' advertises capabilities not implemented by its Agent"
+        }
+        return CapabilityCheckingAgent(agent)
     }
 }
 
@@ -126,7 +123,11 @@ class AgentSession(private val agent: Agent, val id: String = UUID.randomUUID().
 
     fun executeStreaming(request: AgentRequest): Flow<AgentEvent> {
         check(!closed.get()) { "Agent session is closed" }
-        return agent.executeStreaming(request.copy(sessionId = id))
+        return flow {
+            mutex.withLock {
+                agent.executeStreaming(request.copy(sessionId = id)).collect { emit(it) }
+            }
+        }
     }
 
     suspend fun clear() = mutex.withLock {
@@ -204,4 +205,24 @@ sealed interface ToolAuthorization {
     data object Allow : ToolAuthorization
     data class Deny(val reason: String) : ToolAuthorization
     data class RequireApproval(val reason: String) : ToolAuthorization
+}
+
+
+private class CapabilityCheckingAgent(private val delegate: Agent) : Agent {
+    override val capabilities: Set<AgentCapability> get() = delegate.capabilities
+
+    override suspend fun execute(request: AgentRequest): AgentResult {
+        val unsupported = request.requiredCapabilities - capabilities
+        require(unsupported.isEmpty()) { "Backend does not support required capabilities: ${unsupported.joinToString()}" }
+        return delegate.execute(request)
+    }
+
+    override fun executeStreaming(request: AgentRequest): Flow<AgentEvent> {
+        val unsupported = request.requiredCapabilities - capabilities
+        require(unsupported.isEmpty()) { "Backend does not support required capabilities: ${unsupported.joinToString()}" }
+        require(AgentCapability.STREAMING in capabilities) { "Backend does not support streaming" }
+        return delegate.executeStreaming(request)
+    }
+
+    override fun close() = delegate.close()
 }
