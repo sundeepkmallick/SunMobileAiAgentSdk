@@ -36,4 +36,4 @@ jobs:
         run: sdkmanager --install "platforms;android-36" "build-tools;36.0.0"
       - uses: gradle/actions/setup-gradle@v4
       - name: Build offline Android sample
-        run: ./gradlew :sample-app:assembleDebug
+        run: ./gradlew :sample-app:assembleDebug :agent-adk:assembleDebug :agent-firebase:assembleDebug :agent-litertlm:assembleDebug :agent-gemini-nano:assembleDebug
