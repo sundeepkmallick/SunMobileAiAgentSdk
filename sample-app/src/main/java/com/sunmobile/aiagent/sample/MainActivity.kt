@@ -103,11 +103,8 @@ private class SampleMockBackend : AgentBackendProvider {
             val tool = tools.get("readSampleNotes")
                 ?: return AgentResult("No sample notes tool registered.")
             val context = ToolExecutionContext(configuration.name, request.sessionId, request.metadata)
-            val decision = policy.authorize(tool.definition.name, buildJsonObject {}, context)
-            if (decision !is ToolAuthorization.Allow) {
-                return AgentResult("Host policy did not authorize the sample tool.")
-            }
-            val notes = tool.execute(buildJsonObject {}, context)
+            val notes = ToolExecutor(tools, policy).execute(tool.definition.name, buildJsonObject {}, context)
+            if (notes.isError) return AgentResult(notes.content)
             return AgentResult(
                 "Offline mock summary:\n\n${notes.content}\n\nThis demonstrates SDK composition only. Replace the mock provider and tool with real, host-authorized integrations."
             )
