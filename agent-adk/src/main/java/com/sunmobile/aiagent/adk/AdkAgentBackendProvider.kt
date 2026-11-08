@@ -13,7 +13,7 @@ import com.google.adk.kt.tools.Toolset
 import com.google.adk.kt.types.Content
 import com.google.adk.kt.types.FunctionDeclaration
 import com.google.adk.kt.types.Part
-import com.google.adk.kt.types.RunConfig
+import com.google.adk.kt.agents.RunConfig
 import com.google.adk.kt.types.Schema
 import com.google.adk.kt.types.Type
 import com.sunmobile.aiagent.core.Agent
@@ -36,7 +36,9 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
@@ -199,8 +201,8 @@ private class CoreBaseTool(
             arguments = args.toJsonObject(),
             context = ToolExecutionContext(
                 agentName = agentName,
-                sessionId = context.session.id,
-                requestMetadata = mapOf("adkUserId" to context.session.userId),
+                sessionId = context.session.key.id,
+                requestMetadata = mapOf("adkUserId" to context.session.key.userId),
             ),
         )
         if (result.isError) return mapOf("error" to result.content)
