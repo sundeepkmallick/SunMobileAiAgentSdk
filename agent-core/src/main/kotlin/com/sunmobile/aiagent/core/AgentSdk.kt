@@ -218,7 +218,7 @@ sealed interface ToolAuthorization {
 }
 
 
-private class CapabilityCheckingAgent(private val delegate: Agent) : Agent {
+private class CapabilityCheckingAgent(private val delegate: Agent) : Agent, SessionAwareAgent {
     override val capabilities: Set<AgentCapability> get() = delegate.capabilities
 
     override suspend fun execute(request: AgentRequest): AgentResult {
@@ -232,6 +232,12 @@ private class CapabilityCheckingAgent(private val delegate: Agent) : Agent {
         require(unsupported.isEmpty()) { "Backend does not support required capabilities: ${unsupported.joinToString()}" }
         require(AgentCapability.STREAMING in capabilities) { "Backend does not support streaming" }
         return delegate.executeStreaming(request)
+    }
+
+    override suspend fun clearSession(sessionId: String) {
+        val aware = delegate as? SessionAwareAgent
+            ?: throw UnsupportedOperationException("This backend does not support clearing sessions")
+        aware.clearSession(sessionId)
     }
 
     override fun close() = delegate.close()
