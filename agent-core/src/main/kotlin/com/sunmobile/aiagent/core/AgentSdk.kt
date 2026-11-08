@@ -9,6 +9,13 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.longOrNull
+import kotlinx.serialization.json.doubleOrNull
+import kotlinx.serialization.json.booleanOrNull
 
 /** Capabilities actually supported by a selected backend/model configuration. */
 enum class AgentCapability {
@@ -247,6 +254,11 @@ class ToolExecutor(
         val tool = registry.get(toolName)
             ?: return ToolResult("Unknown tool: $toolName", isError = true)
         val scopedContext = context.copy(toolRiskLevel = tool.definition.riskLevel)
+        try {
+            ToolSchemaValidator.validate(tool.definition.parameters, arguments, "$")
+        } catch (invalid: IllegalArgumentException) {
+            return ToolResult("Invalid tool arguments: ${invalid.message}", isError = true)
+        }
         return when (val authorization = policy.authorize(toolName, arguments, scopedContext)) {
             ToolAuthorization.Allow -> tool.execute(arguments, scopedContext)
             is ToolAuthorization.Deny -> ToolResult("Tool denied: ${authorization.reason}", isError = true)
@@ -255,3 +267,58 @@ class ToolExecutor(
         }
     }
 }
+
+
+/** Validates the deliberately small JSON Schema subset exposed by the portable core. */
+private object ToolSchemaValidator {
+    fun validate(schema: JsonObject, value: JsonObject, path: String) {
+        validateValue(schema, value, path)
+    }
+
+    private fun validateValue(schema: JsonObject, value: JsonElement, path: String) {
+        val type = schema["type"]?.jsonPrimitive?.contentOrNull
+        when (type) {
+            null -> Unit
+            "object" -> {
+                require(value is JsonObject) { "$path must be an object" }
+                val properties = schema["properties"]?.jsonObject.orEmpty()
+                val required = schema["required"]?.jsonArray.orEmpty().map { it.jsonPrimitive.content }
+                required.forEach { key -> require(key in value) { "$path.$key is required" } }
+                properties.forEach { (key, childSchema) ->
+                    value[key]?.let { validateValue(childSchema.jsonObject, it, "$path.$key") }
+                }
+                if (schema["additionalProperties"]?.jsonPrimitive?.booleanOrNull == false) {
+                    val unknown = value.keys - properties.keys
+                    require(unknown.isEmpty()) { "$path contains unsupported properties: ${unknown.joinToString()}" }
+                }
+            }
+            "string" -> {
+                require(value is kotlinx.serialization.json.JsonPrimitive && value.isString) { "$path must be a string" }
+                val string = value.content
+                schema["minLength"]?.jsonPrimitive?.intOrNull?.let { require(string.length >= it) { "$path is too short" } }
+                schema["maxLength"]?.jsonPrimitive?.intOrNull?.let { require(string.length <= it) { "$path is too long" } }
+                schema["enum"]?.jsonArray?.let { allowed ->
+                    require(allowed.any { it.jsonPrimitive.content == string }) { "$path is not an allowed value" }
+                }
+            }
+            "integer" -> require(value.jsonPrimitive.longOrNull != null) { "$path must be an integer" }
+            "number" -> require(value.jsonPrimitive.doubleOrNull != null) { "$path must be a number" }
+            "boolean" -> require(value.jsonPrimitive.booleanOrNull != null) { "$path must be a boolean" }
+            "array" -> {
+                require(value is kotlinx.serialization.json.JsonArray) { "$path must be an array" }
+                schema["items"]?.jsonObject?.let { itemSchema ->
+                    value.forEachIndexed { index, item -> validateValue(itemSchema, item, "$path[$index]") }
+                }
+            }
+            else -> throw IllegalArgumentException("Unsupported schema type '$type' at $path")
+        }
+        val number = value.jsonPrimitiveOrNull?.doubleOrNull
+        number?.let {
+            schema["minimum"]?.jsonPrimitive?.doubleOrNull?.let { min -> require(it >= min) { "$path is below minimum" } }
+            schema["maximum"]?.jsonPrimitive?.doubleOrNull?.let { max -> require(it <= max) { "$path is above maximum" } }
+        }
+    }
+}
+
+private val JsonElement.jsonPrimitiveOrNull: kotlinx.serialization.json.JsonPrimitive?
+    get() = this as? kotlinx.serialization.json.JsonPrimitive
