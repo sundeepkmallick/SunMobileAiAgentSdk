@@ -25,7 +25,6 @@ import com.sunmobile.aiagent.core.AgentRequest
 import com.sunmobile.aiagent.core.AgentResult
 import com.sunmobile.aiagent.core.AgentPolicy
 import com.sunmobile.aiagent.core.AgentTool
-import com.sunmobile.aiagent.core.AgentSession
 import com.sunmobile.aiagent.core.SessionAwareAgent
 import com.sunmobile.aiagent.core.ToolExecutor
 import com.sunmobile.aiagent.core.ToolExecutionContext
@@ -78,16 +77,21 @@ class AdkAgentBackendProvider(
         policy: AgentPolicy,
     ): Agent {
         val model = modelFactory.createModel()
-        val toolset = CoreAgentToolset(configuration.name, tools, policy)
-        val adkAgent = LlmAgent(
-            name = configuration.name,
-            model = model,
-            instruction = Instruction(configuration.instructions),
-            toolsets = listOf(toolset),
-        )
-        val sessionService = InMemorySessionService()
-        val runner = InMemoryRunner(adkAgent, appName, sessionService)
-        return AdkAgent(runner, sessionService, model, appName, configuration.name)
+        try {
+            val toolset = CoreAgentToolset(configuration.name, tools, policy)
+            val adkAgent = LlmAgent(
+                name = configuration.name,
+                model = model,
+                instruction = Instruction(configuration.instructions),
+                toolsets = listOf(toolset),
+            )
+            val sessionService = InMemorySessionService()
+            val runner = InMemoryRunner(adkAgent, appName, sessionService)
+            return AdkAgent(runner, sessionService, model, appName, configuration.name)
+        } catch (error: Throwable) {
+            (model as? AutoCloseable)?.let { runCatching { it.close() } }
+            throw error
+        }
     }
 }
 
@@ -168,7 +172,11 @@ private class AdkAgent(
     }
 
     override fun close() {
-        (model as? AutoCloseable)?.close()
+        try {
+            runner.close()
+        } finally {
+            (model as? AutoCloseable)?.close()
+        }
     }
 }
 
