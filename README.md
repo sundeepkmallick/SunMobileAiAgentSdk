@@ -35,7 +35,7 @@ try {
 }
 ```
 
-See [Backend Modules](docs/MODULES.md) for Firebase, LiteRT-LM and Gemini Nano setup notes. Gemini Nano AppFunctions are implemented and authorized by the host app. The LiteRT-LM adapter accepts a preinstalled model file and does not download model weights.
+See [Backend Modules](docs/MODULES.md) for Firebase, LiteRT-LM and Gemini Nano setup notes and [SunCommerzAssociate Migration](docs/SUNCOMMERZ_MIGRATION.md) for the host-app rollout plan. Gemini Nano AppFunctions are implemented and authorized by the host app. The LiteRT-LM adapter accepts a preinstalled model file and does not download model weights.
 
 ## Design principles
 
