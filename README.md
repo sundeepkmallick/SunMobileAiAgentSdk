@@ -53,7 +53,7 @@ Requires JDK 17 and an Android SDK for the sample.
 
 ```bash
 ./gradlew :agent-core:test
-./gradlew :sample-app:assembleDebug
+./gradlew :sample-app:assembleDebug :agent-adk:assembleDebug :agent-firebase:assembleDebug :agent-litertlm:assembleDebug :agent-gemini-nano:assembleDebug
 ```
 
 ## Source application
