@@ -209,8 +209,10 @@ private class CoreBaseTool(
             arguments = args.toJsonObject(),
             context = ToolExecutionContext(
                 agentName = agentName,
-                sessionId = context.session.key.id,
-                requestMetadata = mapOf("adkUserId" to context.session.key.userId),
+                sessionId = context.invocationContext.session.key.id,
+                requestMetadata = mapOf(
+                    "adkUserId" to context.invocationContext.session.key.userId
+                ),
             ),
         )
         if (result.isError) return mapOf("error" to result.content)
