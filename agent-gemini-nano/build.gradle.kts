@@ -1,6 +1,6 @@
 plugins { alias(libs.plugins.android.library) }
 android {
-    namespace = "com.sunmobile.aiagent.gemin nano"
+    namespace = "com.sunmobile.aiagent.gemininano"
     compileSdk = 36
     defaultConfig { minSdk = 26 }
 }
