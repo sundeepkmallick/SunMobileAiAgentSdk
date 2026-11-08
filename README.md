@@ -2,18 +2,22 @@
 
 A reusable Kotlin/Android agent SDK foundation designed to keep agent infrastructure separate from host-application business logic.
 
-> **Status: 0.x foundation / experimental.** The core API, tool registry, offline Android sample, documentation, and CI definition are present. Firebase, LiteRT-LM, and Gemini Nano backend adapters are not shipped in this branch.
+> **Status: 0.x foundation / experimental.** The core API, ADK/Firebase/LiteRT-LM/Gemini Nano adapter modules, offline Android sample, documentation, and CI workflows are present. Backend compilation and device-level validation are pending.
 
 ## Modules
 
 - `:agent-core`: backend-neutral agent, capability, request/result, session, tool registry, and policy contracts. Pure Kotlin/JVM.
+- `:agent-adk`: ADK runner, in-memory session and dynamic core-tool bridge.
+- `:agent-firebase`: Firebase AI Logic model factory.
+- `:agent-litertlm`: LiteRT-LM model factory for host-installed model files.
+- `:agent-gemini-nano`: ML Kit Agent API adapter using host-declared AppFunctions (no dynamic SDK tools).
 - `:sample-app`: offline Android Research Assistant composition example using a mock backend and canned notes. No network calls are made.
 
 See [Architecture](docs/ARCHITECTURE.md), [Modules](docs/MODULES.md), [Public API](docs/PUBLIC_API.md), [Tool Development](docs/TOOL_DEVELOPMENT.md), and [Roadmap](docs/ROADMAP.md).
 
 ## Quick start
 
-A backend provider must be supplied by an optional adapter module or host integration:
+Choose an optional adapter module and provide its model/runtime configuration:
 
 ```kotlin
 val agent = AgentBuilder()
@@ -30,6 +34,8 @@ try {
     agent.close()
 }
 ```
+
+See [Backend Modules](docs/MODULES.md) for Firebase, LiteRT-LM and Gemini Nano setup notes. Gemini Nano AppFunctions are implemented and authorized by the host app. The LiteRT-LM adapter accepts a preinstalled model file and does not download model weights.
 
 ## Design principles
 
@@ -52,7 +58,7 @@ Requires JDK 17 and an Android SDK for the sample.
 
 ## Source application
 
-The extraction assessment used [SunCommerzAssociate](https://github.com/sundeepkmallick/SunCommerzAssociate). BOPIS/pickup workflows, inventory/order/store tools, app-specific instructions, approvals, and AppFunctions remain in that application. See the roadmap for extraction mapping and remaining gates.
+The extraction assessment used [SunCommerzAssociate](https://github.com/sundeepkmallick/SunCommerzAssociate). BOPIS/pickup workflows, inventory/order/store tools, app-specific instructions, approvals, and AppFunctions remain in that application. See the roadmap for extraction mapping and remaining gates. The source application has not yet been migrated.
 
 ## License
 
