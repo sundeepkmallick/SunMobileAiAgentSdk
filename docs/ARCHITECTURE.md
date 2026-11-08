@@ -17,8 +17,8 @@ host application / sample
 
 ## Backend boundaries
 
-- Firebase Gemini and LiteRT-LM can share an ADK integration layer: the source app uses ADK model, agent, runner, session-service, and event abstractions for both.
-- Gemini Nano is separate: ML Kit Agent API runs the agent while AppFunctions are declared and implemented by the host application. It is not an interchangeable ADK model.
+- Firebase Gemini and LiteRT-LM share :agent-adk. :agent-firebase and :agent-litertlm provide vendor model factories, while the shared adapter owns the ADK runner, session service, dynamic Toolset bridge, and event translation.
+- Gemini Nano is separate in :agent-gemini-nano: ML Kit Agent API runs the agent while AppFunctions are declared and implemented by the host application. It is not an interchangeable ADK model and does not expose the SDK ToolRegistry.
 - Providers advertise only capabilities actually supported by the chosen model/runtime.
 - Sessions are not a promise of durable persistence. Firebase, LiteRT-LM, and Gemini Nano have different lifecycle and context constraints.
 
@@ -26,7 +26,7 @@ host application / sample
 
 Tool registration does not authorize execution. The host supplies an AgentPolicy and remains responsible for user consent, authentication, server-side authorization, business validation, and confirmation of irreversible actions. Model output is untrusted input. Never treat a model's proposal as permission to transact.
 
-Adapters must validate arguments against supported schema features and reject unsupported constructs. The SDK does not execute arbitrary generated code. Secrets must not be placed in prompts or tool descriptions.
+The core ToolExecutor validates a deliberately limited JSON Schema subset and applies the host AgentPolicy before ADK tool execution. Unsupported schema keywords are not interpreted as guarantees; tool implementations must still validate their inputs. The Gemini Nano AppFunctions route bypasses the dynamic core ToolRegistry, so each host AppFunction must independently authorize its caller and validate all arguments. The SDK does not execute arbitrary generated code. Secrets must not be placed in prompts or tool descriptions.
 
 ## Lifecycle
 
@@ -38,4 +38,9 @@ Adapters must validate arguments against supported schema features and reject un
 
 ## Model catalogue
 
-No generic model-management artifact is included in this foundation. Model URLs, licenses, checksums, device admission rules, and host-app workflow validation are distinct facts. Runtime support or downloadability does not prove suitability for a host application's tools.
+The LiteRT-LM model factory accepts an already-installed file and initializes the engine; it does not download or verify model weights. Model URLs, licenses, immutable revisions, checksums, device admission rules, and host-app workflow validation are distinct facts. Runtime support or downloadability does not prove suitability for a host application's tools.
+
+
+## Validation status
+
+The adapter modules are present, but CI compilation and device-level execution are not yet verified. The source app baseline and backend constraints are recorded in docs/COMPATIBILITY.md. Do not treat an adapter as production-ready until its pinned dependency graph and runtime/device test matrix pass.
