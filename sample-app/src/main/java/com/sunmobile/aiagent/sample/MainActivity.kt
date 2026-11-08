@@ -90,7 +90,7 @@ private class SampleKnowledgeTool : AgentTool {
 
 private class SampleMockBackend : AgentBackendProvider {
     override val backendId = "sample-mock"
-    override val capabilities = setOf(AgentCapability.TOOL_CALLING, AgentCapability.MULTI_TURN)
+    override val capabilities = setOf(AgentCapability.TOOL_CALLING, AgentCapability.MULTI_TURN, AgentCapability.STREAMING)
 
     override suspend fun createAgent(
         configuration: AgentConfiguration,
