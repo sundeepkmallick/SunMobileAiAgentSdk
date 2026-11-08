@@ -144,7 +144,8 @@ class AgentSession(private val agent: Agent, val id: String = UUID.randomUUID().
 data class ToolExecutionContext(
     val agentName: String,
     val sessionId: String?,
-    val requestMetadata: Map<String, String> = emptyMap()
+    val requestMetadata: Map<String, String> = emptyMap(),
+    val toolRiskLevel: ToolRiskLevel = ToolRiskLevel.READ_ONLY
 )
 
 enum class ToolRiskLevel { READ_ONLY, REVERSIBLE, SENSITIVE, HIGH_IMPACT }
@@ -226,4 +227,31 @@ private class CapabilityCheckingAgent(private val delegate: Agent) : Agent {
     }
 
     override fun close() = delegate.close()
+}
+
+
+/**
+ * Applies the host policy before invoking a registered tool. RequireApproval is
+ * deliberately fail-closed: the host must obtain approval out-of-band and then
+ * re-authorize; the SDK never interprets model output as consent.
+ */
+class ToolExecutor(
+    private val registry: ToolRegistry,
+    private val policy: AgentPolicy
+) {
+    suspend fun execute(
+        toolName: String,
+        arguments: JsonObject,
+        context: ToolExecutionContext
+    ): ToolResult {
+        val tool = registry.get(toolName)
+            ?: return ToolResult("Unknown tool: $toolName", isError = true)
+        val scopedContext = context.copy(toolRiskLevel = tool.definition.riskLevel)
+        return when (val authorization = policy.authorize(toolName, arguments, scopedContext)) {
+            ToolAuthorization.Allow -> tool.execute(arguments, scopedContext)
+            is ToolAuthorization.Deny -> ToolResult("Tool denied: ${authorization.reason}", isError = true)
+            is ToolAuthorization.RequireApproval ->
+                ToolResult("Tool requires host approval: ${authorization.reason}", isError = true)
+        }
+    }
 }
