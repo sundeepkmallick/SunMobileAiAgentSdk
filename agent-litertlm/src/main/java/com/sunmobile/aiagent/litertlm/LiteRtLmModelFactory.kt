@@ -6,6 +6,8 @@ import com.google.ai.edge.litertlm.Backend
 import com.google.ai.edge.litertlm.EngineConfig
 import com.sunmobile.aiagent.adk.AdkModelFactory
 import java.io.File
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * Creates an ADK LiteRT-LM model from a host-managed, already downloaded model artifact.
@@ -23,7 +25,7 @@ class LiteRtLmModelFactory(
         require(modelName.isNotBlank()) { "modelName must not be blank" }
     }
 
-    override suspend fun createModel(): Model {
+    override suspend fun createModel(): Model = withContext(Dispatchers.IO) {
         require(modelFile.isFile && modelFile.canRead()) {
             "LiteRT-LM model file is missing or unreadable: ${modelFile.absolutePath}"
         }
@@ -40,7 +42,7 @@ class LiteRtLmModelFactory(
         )
         try {
             model.engine.initialize()
-            return model
+            model
         } catch (error: Throwable) {
             runCatching { model.close() }
             throw error
