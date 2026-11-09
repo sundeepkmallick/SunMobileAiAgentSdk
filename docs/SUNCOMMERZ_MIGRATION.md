@@ -1,86 +1,74 @@
-# SunCommerzAssociate migration guide
+# SunCommerzAssociate integration and migration guide
 
-This document describes a safe host-app migration. **The SunCommerzAssociate repository has not been modified by this SDK branch.** Do not replace the current pickup implementation until the integration tests and rollout gates below pass.
+The integration described here has been implemented on [SunCommerzAssociate PR #4](https://github.com/sundeepkmallick/SunCommerzAssociate/pull/4). That PR is currently draft and is not yet validated for merge: the latest Android workflow compiled the application but failed two unit tests in `LocalModelCompatibilityTest`. This guide records the implemented architecture and the remaining validation steps; it is not a production-readiness claim.
 
-## 1. Add the SDK modules
+## 1. SDK wiring
 
-While the SDK is still a local Git branch, consume it with a Gradle composite build or local checkout. For example, in the host app's settings:
+The host application consumes the SDK as a Git submodule pinned to a specific SDK commit and includes the checkout through Gradle composite build. No Maven publication or credentials are required for this development integration.
 
-```kotlin
-includeBuild("../SunMobileAiAgentSdk")
+Clone the application with submodules:
+
+```bash
+git clone --recurse-submodules https://github.com/sundeepkmallick/SunCommerzAssociate.git
+cd SunCommerzAssociate
+./gradlew :app:assembleDebug :app:testDebugUnitTest
 ```
 
-The SDK root assigns group `com.sunmobile.aiagent` and version `0.1.0-SNAPSHOT`, so the composite build can substitute module coordinates automatically. Add the dependencies you need, for example:
+For an existing checkout:
 
-```kotlin
-dependencies {
-    implementation("com.sunmobile.aiagent:agent-core:0.1.0-SNAPSHOT")
-    implementation("com.sunmobile.aiagent:agent-adk:0.1.0-SNAPSHOT")
-    implementation("com.sunmobile.aiagent:agent-firebase:0.1.0-SNAPSHOT")
-}
+```bash
+git submodule update --init --recursive
 ```
 
-Once the SDK has a reviewed release, replace this local wiring with published Maven coordinates. No artifact has been published by this branch.
+The host settings include the SDK checkout with `includeBuild("SunMobileAiAgentSdk")`. Keep the submodule gitlink pinned to a reviewed SDK commit; do not rely on a moving branch name for reproducible builds. The SDK has not been published to Maven by this branch.
 
-Avoid resolving duplicate ADK versions. The adapters currently pin the source app's observed ADK 1.0.0 baseline, LiteRT-LM 0.13.1, ML Kit Agent API 1.0.0-alpha1 and GenAI Prompt 1.0.0-beta5. Compare the resolved dependency graph before enabling the adapters.
+## 2. Module responsibilities
 
-## 2. Port application tools
+The host includes `:agent-core`, `:agent-adk`, `:agent-firebase` and `:agent-litertlm` for the Firebase and LiteRT-LM paths.
 
-Port inventory, store, order and substitution capabilities as host-owned AgentTool implementations. Keep repositories/use cases and data sources in the host app. Give each tool:
-- a stable name and accurate JSON object schema;
-- an explicit ToolRiskLevel;
-- argument validation at the tool boundary;
-- authorization against the signed-in associate and current store/order;
-- minimal output and explicit error results.
+- `:agent-core` supplies the backend-neutral contracts, tool registry, schema validation and policy executor.
+- `:agent-adk` supplies the shared Google ADK runner, in-memory session and dynamic core-tool bridge.
+- `:agent-firebase` creates a Firebase AI Logic model from the host's initialized FirebaseApp.
+- `:agent-litertlm` creates a LiteRT-LM model from an already-installed file.
 
-Use the SDK ToolRegistry and AgentPolicy for ADK-backed agents. The SDK ToolExecutor applies schema validation and policy before calling the tool. Do not allow model-supplied associate IDs, store IDs, permissions, stock quantities, prices or order state to become authoritative.
+Gemini Nano intentionally remains on the existing host ML Kit Agent API + AppFunctions implementation. The SDK Gemini Nano adapter is a separate optional path; its AppFunctions are host-declared and its policy cannot intercept framework-dispatched AppFunctions.
 
-## 3. Select a backend
+## 3. Host-owned BOPIS tools and request scoping
 
-### Firebase AI Logic + ADK
+The host composes read-only tools per active order item. It passes the current product ID, current store ID, requested quantity and maximum nearby-store radius from the active workflow. Tool implementations validate model arguments against those host-owned values.
 
-Construct an AdkAgentBackendProvider with FirebaseAiModelFactory. Keep Firebase initialization, App Check, user auth and model selection in the host app.
+The integration's safeguards include:
+- stock lookup is restricted to the current order product;
+- store lookup is restricted to the current store or nearby stores discovered by the host's stock-filtered nearby-store use case;
+- requested quantity and radius cannot be expanded by model arguments;
+- the model cannot select an associate, order, tenant or arbitrary store scope;
+- the SDK policy permits only read-only tool risk levels in this composition;
+- the host re-reads live inventory and fulfillment options before presenting/approving a proposal.
 
-### LiteRT-LM + ADK
+Model output is a proposal, not an order mutation. Associate approval and the authoritative order update remain in the host application.
 
-Construct an AdkAgentBackendProvider with LiteRtLmModelFactory. Continue to use the host LocalModelCatalog and download manager to verify the model artifact, license, checksum, device requirements and free storage. Call the provider only after the host has verified and installed the selected file. Preserve the source app's release-before-replacement and serialized runtime lifecycle.
+## 4. LiteRT-LM lifecycle and model management
 
-### Gemini Nano + AppFunctions
+The host's download manager and local model catalogue remain responsible for artifact provenance, license, immutable revision, file size, SHA-256, installation and device/workflow admission. The SDK factory accepts a preinstalled file and does not download or verify model weights.
 
-Use GeminiNanoAgentBackendProvider only when API 36+ and AICore reports the feature available. Keep PickupAppFunctionService and its declared AppFunctions in the host app. AppFunctions must independently validate caller identity, permissions, user consent and all business rules. The SDK AgentPolicy does not intercept Android framework AppFunction dispatch. This backend rejects a non-empty SDK ToolRegistry by design.
+The host serializes SDK LiteRT-LM execution and model maintenance so an in-flight turn closes its native engine before a model file is replaced or removed. Keep this lifecycle guard until device tests prove a safer alternative.
 
-## 4. Preserve current pickup semantics
+## 5. CI and current validation
 
-- Keep PickupAgentInstructions and all pickup/BOPIS instructions in the host app.
-- Keep HybridPickupAgentManager and fallback selection in the host app.
-- Preserve the existing stock-verification postcondition. The model saying it checked stock is not evidence; verify that the authoritative inventory tool was actually called and returned current data.
-- Preserve associate approval for sensitive/high-impact operations. A ToolAuthorization.RequireApproval response is fail-closed; the host must obtain approval and then re-authorize.
-- Preserve the current product substitution and store-radius business rules in host use cases.
-- The source Firebase implementation deliberately used a fresh in-memory session service per request. The SDK ADK adapter keeps a session service for the agent lifetime. Use a new unique session ID per pickup attempt or explicitly clear the session when isolation is required.
-- The source LiteRT-LM implementation serialized its runtime and released the native engine before model replacement. Test concurrent turns, cancellation, close and replacement against the adapter before removing the existing guard.
-- Gemini Nano is single-turn in this adapter; do not assume persistent conversation history.
+SDK CI run [#123](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42594131318) passed both core unit tests and the sample/adapter compilation tasks.
 
-## 5. Rollout sequence
+The latest observed host PR #4 Android workflow [run #35](https://github.com/sundeepkmallick/SunCommerzAssociate/actions/runs/42591908382) completed compilation and then failed two tests in `LocalModelCompatibilityTest` (4 tests executed, 2 failed). Fix these failures and rerun the complete workflow before merging the host PR. The placeholder Firebase configuration in CI is compile-only and cannot validate real Firebase requests.
 
-1. Add SDK dependencies behind a disabled feature flag.
-2. Port read-only inventory/store tools and compare results with the current implementation.
-3. Run shadow-mode evaluations without allowing model-generated mutations.
-4. Add human approval gates and verify denial paths.
-5. Test Firebase and LiteRT-LM on the source app's supported devices and model artifacts.
-6. Test Gemini Nano/AppFunctions only on supported API 36+ devices with AICore availability.
-7. Run regression tests for stock lookup, substitution, quantity/radius, wrong-store access, unavailable model, low memory, model replacement, cancellation, retry, and offline operation.
-8. Enable by backend and cohort with rollback to the existing implementation.
-9. Remove the old implementation only after production telemetry and business-owner approval.
+Neither CI workflow establishes physical-device behavior, Firebase credentials/App Check, Gemini Nano availability, AppFunctions authorization, model performance or production readiness.
 
-## 6. Required regression tests
+## 6. Required follow-up validation
 
-- A request for pickup cannot proceed without an authoritative current-store stock check.
-- A tool call for another associate, tenant or unauthorized store is denied.
-- A stale or malformed model argument cannot mutate an order.
-- Approval-required actions do not run before explicit associate confirmation.
-- A retry does not inherit an unrelated order's session state.
-- A model switch releases LiteRT-LM resources before replacing or deleting model files.
-- Gemini Nano unavailability or API-level mismatch cleanly falls back through the host manager.
-- Tool failures, timeouts, cancellation and partial streams do not leave native resources or pending order mutations behind.
+Before enabling the integration for associates:
+1. Resolve the two failing host unit tests and obtain a green host CI run.
+2. Run Firebase and LiteRT-LM on supported devices with the real host configuration.
+3. Test Gemini Nano on eligible API 36+ devices, including AICore availability and AppFunctions authorization.
+4. Exercise wrong-product/store scope, quantity/radius boundaries, unavailable models, low memory, model replacement, cancellation, retry and offline behavior.
+5. Verify approval and authoritative inventory/order revalidation remain mandatory.
+6. Roll out behind the host feature flag with telemetry and rollback to the existing implementation.
 
-Record results in the host app's own test suite and update docs/COMPATIBILITY.md with device/build evidence.
+Do not remove legacy pickup classes until device tests, regression coverage and rollout telemetry justify doing so.
