@@ -1,7 +1,11 @@
 plugins { alias(libs.plugins.android.application) }
 android {
     namespace = "com.sunmobile.aiagent.sample"
-    compileSdk = 36
+    compileSdk {
+        version = release(36) {
+            minorApiLevel = 1
+        }
+    }
     defaultConfig {
         applicationId = "com.sunmobile.aiagent.sample"
         minSdk = 26
