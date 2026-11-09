@@ -1,6 +1,6 @@
-# Public API (0.x)
+# Public API (0.1.0-rc.1 review candidate)
 
-The public API is experimental. SDK CI currently verifies compilation and core unit tests, but device/runtime validation, binary/API compatibility review and production qualification are not complete.
+The public API is experimental in this 0.1.0-rc.1 review candidate. SDK CI verifies compilation and core unit tests, but device/runtime validation, independent binary/API compatibility review and production qualification are not complete. Do not treat this candidate as a stable compatibility promise.
 
 ## Create and execute an agent
 
