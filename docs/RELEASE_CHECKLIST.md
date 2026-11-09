@@ -2,9 +2,12 @@
 
 This checklist is maintained honestly for the `0.1.0-rc.1` review candidate. A green compile/test workflow is not a substitute for runtime, security, legal or release-signing evidence. Do not publish a stable release while any required gate below remains open.
 
+See [EMULATOR_AND_DEVICE_TESTING.md](EMULATOR_AND_DEVICE_TESTING.md) for the detailed emulator test plan, physical-device test matrix, evidence template and deferred release gates.
+
 ## Verified in the repository
 
 - [x] SDK CI on the current `main` commit passed: [run #137](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42604253210) (core unit tests and Android sample plus all adapter builds).
+- [x] Release-candidate CI passed on `release/0.1.0-rc.1`: [run #138](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42606063632) (core tests and sample/adapter builds). This is build/test evidence, not hardware runtime qualification.
 - [x] Adapter support matrix and known runtime limitations documented in [COMPATIBILITY.md](COMPATIBILITY.md).
 - [x] Tool-policy behavior has core unit coverage for deny, require-approval fail-closed behavior, malformed required arguments and allowed execution. This is test evidence, not an independent security review.
 - [x] Sample app labels its backend and research content as mocked/offline and makes no network calls; no credentials are present in the sample source.
@@ -12,7 +15,7 @@ This checklist is maintained honestly for the `0.1.0-rc.1` review candidate. A g
 
 ## Required before stable 0.1.0
 
-- [ ] Run and pass all SDK CI jobs on this release-candidate commit.
+- [ ] Emulator test plan executed and evidence recorded where the relevant backend/runtime is supported by the emulator. Emulator results do not replace physical-device tests.
 - [ ] Unit, contract and adapter runtime tests pass; add instrumentation and physical-device coverage for each supported backend.
 - [ ] Public API review and binary/API compatibility report completed and reviewed.
 - [ ] Firebase, LiteRT-LM and Gemini Nano support matrix confirmed on real supported devices and service/runtime versions.
