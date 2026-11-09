@@ -1,0 +1,13 @@
+# Local machine configuration
+/local.properties
+
+# Gradle
+.gradle/
+/build/
+**/build/
+
+# Android / IDE
+.idea/
+*.iml
+/local.properties
+.DS_Store
