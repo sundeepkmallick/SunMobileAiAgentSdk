@@ -1,6 +1,6 @@
 # Roadmap and extraction status
 
-This branch contains the backend-neutral SDK, four adapter modules, tests, security guidance and an offline sample. The adapter modules compile in SDK CI. Host-app integration has been implemented in a separate draft PR; production readiness is not claimed.
+This branch contains the backend-neutral SDK, four adapter modules, tests, security guidance and an offline sample. The adapter modules compile in SDK CI. Host-app integration has been implemented in a separate draft PR; CI compile/unit-test checks now pass, but production readiness is not claimed.
 
 ## Phases
 
@@ -9,8 +9,8 @@ This branch contains the backend-neutral SDK, four adapter modules, tests, secur
 - [x] Phase 3 — Provider SPI, capabilities, request/result/events, builder, session facade and capability checks.
 - [x] Phase 4 — ADK, Firebase, LiteRT-LM and Gemini Nano adapter modules and model factories. SDK CI compilation passed; runtime/device validation remains.
 - [x] Phase 5 — Offline Research Assistant sample with explicit mock-data disclosure.
-- [x] Phase 6 — SunCommerzAssociate host integration implemented in [PR #4](https://github.com/sundeepkmallick/SunCommerzAssociate/pull/4). The PR remains draft; its latest Android CI run failed two `LocalModelCompatibilityTest` unit tests, so host integration validation is not complete.
-- [ ] Phase 7 — Production readiness: physical-device matrix, Firebase/Gemini Nano runtime verification, security review, API/binary compatibility, release signing and publication.
+- [x] Phase 6 — SunCommerzAssociate host integration implemented in [PR #4](https://github.com/sundeepkmallick/SunCommerzAssociate/pull/4). Host Android CI passed on the latest fix ([run #37](https://github.com/sundeepkmallick/SunCommerzAssociate/actions/runs/42601525623)); the host PR remains draft and device/runtime validation is not complete.
+- [ ] Phase 7 — Production readiness: physical-device matrix, Firebase/Gemini Nano runtime verification, security/privacy review, API/binary compatibility, release signing and publication decision.
 
 ## Extraction mapping
 
@@ -36,11 +36,11 @@ This branch contains the backend-neutral SDK, four adapter modules, tests, secur
 
 ## CI evidence and remaining gates
 
-SDK PR #1 head commit `ebfecc9669eac07d61608b1ca99513b93fa290c1` passed [CI run #123](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42594131318): core unit tests and sample plus all adapter module builds succeeded.
+- SDK `main` commit `2eb3d6db4759cc855f5853e6a0962d698c1a8647` passed [CI run #137](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42604253210): core unit tests and sample plus all adapter module builds succeeded.
+- SunCommerzAssociate PR #4 head commit `784fa34033bbe081988568bebe9a337e676b8f22` passed [host CI run #37](https://github.com/sundeepkmallick/SunCommerzAssociate/actions/runs/42601525623): app compilation and unit tests succeeded.
+- The SDK release candidate must pass its own PR checks before approval. Neither CI result establishes physical-device behavior, production readiness or independent security/privacy review.
 
-The latest observed host PR #4 workflow [run #35](https://github.com/sundeepkmallick/SunCommerzAssociate/actions/runs/42591908382) failed two tests in `LocalModelCompatibilityTest`. Fix and rerun those tests before marking the host integration validated or merging that PR.
-
-Before production readiness:
+Before stable release:
 - Test generic tool calls, streaming, cancellation, timeouts, sessions, close/release, concurrency and model replacement on supported devices.
 - Test Firebase with real host initialization, App Check/auth and non-production credentials.
 - Test Gemini Nano on eligible devices/API levels, including AppFunctions permission and service behavior.
