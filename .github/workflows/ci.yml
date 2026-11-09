@@ -50,7 +50,7 @@ jobs:
         with:
           packages: 'platform-tools'
       - name: Install Android SDK platform
-        run: sdkmanager --install "platforms;android-36" "build-tools;36.0.0"
+        run: sdkmanager --install "platforms;android-36.1" "build-tools;36.0.0"
       - uses: gradle/actions/setup-gradle@v4
       - name: Download Gradle distribution (retry transient failures)
         shell: bash
