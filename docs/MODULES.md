@@ -8,7 +8,8 @@
 | `:agent-adk` | Google ADK runner, in-memory sessions, streaming/event translation and dynamic Toolset bridge for core tools | Google ADK Kotlin Android 1.0.0 |
 | `:agent-firebase` | Firebase AI Logic model factory for the shared ADK provider | Host-initialized FirebaseApp; ADK Firebase integration |
 | `:agent-litertlm` | LiteRT-LM model factory for an already-installed model file | ADK LiteRT-LM integration and LiteRT-LM 0.13.1 |
-| `:agent-gemini-nano` | ML Kit Agent API backend using host-declared AppFunctions | ML Kit Agent API alpha1 / GenAI Prompt beta5; no dynamic SDK tools |
+| `:agent-mlkit` | First-class ML Kit GenAI Agent + Prompt backend using host-declared AppFunctions | ML Kit Agent API alpha1 / GenAI Prompt beta5; no dynamic SDK tools |
+| `:agent-gemini-nano` | Legacy adapter retained for compatibility | Same ML Kit APIs; new consumers should use `:agent-mlkit` |
 | `:sample-app` | Offline Android Research Assistant using explicitly labelled mock data | Android and `:agent-core`; no network calls |
 
 ## Backend usage
@@ -23,7 +24,7 @@ Create a `LiteRtLmModelFactory` with the installed model file, cache directory a
 
 ### Gemini Nano
 
-`GeminiNanoAgentBackendProvider` uses ML Kit Agent API and enables AppFunctions. It deliberately rejects a non-empty core ToolRegistry: AppFunctions are declared and implemented by the host app, not dynamically registered by this SDK. Every AppFunction must independently enforce caller identity, permission, consent and business authorization; SDK AgentPolicy does not intercept framework-dispatched AppFunctions. The provider defaults to Android API 36 minimum and checks runtime availability. This backend should not be treated as an interchangeable ADK model or as a durable multi-turn session.
+`GeminiNanoAgentBackendProvider` in `agent-mlkit` uses ML Kit Agent API and enables AppFunctions. It deliberately rejects a non-empty core ToolRegistry: AppFunctions are declared and implemented by the host app, not dynamically registered by this SDK. Every AppFunction must independently enforce caller identity, permission, consent and business authorization; SDK AgentPolicy does not intercept framework-dispatched AppFunctions. The provider defaults to Android API 36 minimum and checks runtime availability. This backend should not be treated as an interchangeable ADK model or as a durable multi-turn session.
 
 ## Host application responsibilities
 
