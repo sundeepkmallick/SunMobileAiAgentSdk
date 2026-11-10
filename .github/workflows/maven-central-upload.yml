@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       confirmation:
-        description: Type UPLOAD-0.1.0-rc.1 to upload a user-managed deployment to Sonatype
+        description: Type UPLOAD-0.1.0-rc.2 to upload a user-managed deployment to Sonatype
         required: true
         type: string
 
@@ -53,7 +53,7 @@ jobs:
           test -n "$MAVEN_CENTRAL_PASSWORD"
       - name: Publish signed artifacts to the runner's local Maven repository
         run: ./gradlew --no-daemon publishSdkToMavenLocal
-      - name: Verify all five coordinates, POM metadata and PGP signatures
+      - name: Verify all six coordinates, POM metadata and PGP signatures
         env:
           VERIFY_MAVEN_SIGNATURES: "true"
         run: python3 scripts/verify-maven-local.py
