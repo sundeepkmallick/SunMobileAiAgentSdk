@@ -1,10 +1,8 @@
 # Maven publication: 0.1.0-rc.1
 
-This document describes the **local-only** Maven publication candidate. The Sonatype Central namespace `io.github.sundeepkmallick` has been verified. This configuration does not yet publish to Maven Central or any other remote repository. The project remains at `0.1.0-rc.1`; this work does not create a stable `0.1.0` release or tag.
+This document describes local verification and the controlled Sonatype Central Portal staging upload for the five SDK modules. The verified namespace is `io.github.sundeepkmallick`. The release candidate remains `0.1.0-rc.1`; this workflow does not create a stable `0.1.0` release or a Git tag.
 
 ## Published modules and coordinates
-
-All five SDK modules use group `io.github.sundeepkmallick` and version `0.1.0-rc.1`.
 
 | Module | Maven artifact |
 | --- | --- |
@@ -14,15 +12,9 @@ All five SDK modules use group `io.github.sundeepkmallick` and version `0.1.0-rc
 | `:agent-litertlm` | `io.github.sundeepkmallick:agent-litertlm:0.1.0-rc.1` |
 | `:agent-gemini-nano` | `io.github.sundeepkmallick:agent-gemini-nano:0.1.0-rc.1` |
 
-The sample application is intentionally not published.
+The sample application is not published.
 
-## Artifact contents and metadata
-
-Each publication is built from its Gradle Java or Android release component so dependency metadata is derived from the actual component rather than manually copied. The JVM module and Android release variants attach sources and Javadoc JARs. Generated POMs include project name/description, project URL, Apache-2.0 license, developer contact and SCM coordinates.
-
-Android artifacts publish the `release` variant. Consumers must use a compatible Android Gradle Plugin and Android SDK; the SDK baseline is documented in [Compatibility](COMPATIBILITY.md). Publication does not imply that a backend is runtime-qualified on physical devices.
-
-## Publish to the local Maven repository
+## Local build and verification
 
 Requires JDK 17 and an installed Android SDK matching the project compile SDK.
 
@@ -31,35 +23,50 @@ Requires JDK 17 and an installed Android SDK matching the project compile SDK.
 python3 scripts/verify-maven-local.py
 ```
 
-The aggregate task publishes only to `mavenLocal()`, normally `~/.m2/repository`. The verification script checks the five POM coordinates and metadata and requires both sources and Javadoc JARs. It does not contact a remote artifact repository.
+The local publication task writes only to `mavenLocal()`. The verification script checks all five POM coordinates and metadata and requires source and Javadoc JARs. It does not contact a remote repository.
 
-To test a separate consumer build after local publication:
+## Sonatype Central staging upload
 
-```bash
-./gradlew -p validation/maven-consumer :consumer:assembleDebug
-```
+Sonatype does not currently provide an official Gradle plugin for the Central Publisher Portal. This repository therefore uses Gradle's Maven Publish and Signing plugins to create signed Maven artifacts locally, then a small Python standard-library client to assemble the Maven-layout bundle and call the Portal Publisher API. Sonatype documents the bundle layout and API at:
 
-That fixture resolves all five coordinates from Maven local and compiles an independent Android library project. CI runs the same publication, artifact verification and consumer-resolution sequence.
+- [Central Portal bundle upload](https://central.sonatype.org/publish/publish-portal-upload/)
+- [Central Portal Publisher API](https://central.sonatype.org/publish/publish-portal-api/)
+- [Central publishing requirements](https://central.sonatype.org/publish/requirements/)
 
-## Signing
+The manually dispatched workflow is `.github/workflows/maven-central-upload.yml`. It requires the exact confirmation string `UPLOAD-0.1.0-rc.1`, builds and signs all five publications, validates required POM metadata and signatures, creates checksums, retains the bundle as a workflow artifact, and uploads it with `publishingType=USER_MANAGED`.
 
-The Gradle Signing plugin is configured for all five publications. Signing is enabled when both environment variables are present:
+**This upload does not publish to Maven Central.** After the upload, Sonatype validates the deployment. A maintainer must inspect the deployment in the Central Portal and explicitly select Publish. The workflow never calls the publish endpoint and never uses automatic publishing.
 
-- `SIGNING_KEY`: ASCII-armored private OpenPGP key material
-- `SIGNING_PASSWORD`: passphrase for that key
+### GitHub Actions environment and secrets
 
-Alternatively, Gradle project properties `signingKey` and `signingPassword` may be supplied through a private, untracked `~/.gradle/gradle.properties` file. Never put keys or passphrases in source control, CI logs, command-line arguments, sample files or repository configuration. Use the CI secret store if signing is later added to a release workflow. Without signing material, local publication is unsigned; the verification workflow deliberately does not pretend otherwise.
+Create a GitHub Actions environment named `maven-central-staging` and add these environment secrets:
 
-A local signing dry run can be performed with a dedicated test key in a secure environment. Do not add production signing secrets to this repository.
+| Secret | Value |
+| --- | --- |
+| `MAVEN_CENTRAL_USERNAME` | Username portion of a Sonatype Central Portal user token |
+| `MAVEN_CENTRAL_PASSWORD` | Password portion of that user token |
+| `SIGNING_KEY` | ASCII-armored private OpenPGP key |
+| `SIGNING_PASSWORD` | Passphrase for the private key |
 
-## Publication safety boundary
+Generate a dedicated Portal user token from [Central Portal user tokens](https://central.sonatype.com/usertoken); do not use the Portal account password. Save the token when it is generated because the secret values are not shown again. Do not paste credentials or private signing material into chat, source files, workflow YAML, build logs or command-line arguments.
 
-- No remote Maven repository is configured.
-- No Sonatype/Maven Central credentials or publishing secrets are required.
-- No workflow invokes a remote publish task.
-- No stable `0.1.0` version, tag or release is created.
-- Do not enable remote publication until namespace ownership, repository account setup, signing-key custody, publication validation and maintainer approval are separately confirmed.
+Publish the corresponding public OpenPGP key to a public keyserver before attempting the upload. Protect the environment and its secrets with the repository's normal access controls. The workflow runs only on manual dispatch; it is not triggered by pull requests, pushes, tags or releases.
+
+### Upload and final publication sequence
+
+1. Review and merge the publishing workflow.
+2. Configure the `maven-central-staging` environment secrets.
+3. Open Actions → Upload Maven Central staging deployment → Run workflow.
+4. Enter exactly `UPLOAD-0.1.0-rc.1`.
+5. Inspect the uploaded bundle and wait for Sonatype validation.
+6. Review all five components and metadata in Central Portal. Only then, as a separate explicit action, select Publish.
+
+Published Central components are immutable. Do not select Publish until the version, coordinates, POM metadata, signatures, dependencies and release qualification are accepted.
+
+## Signing and bundle contents
+
+Central requires a POM, primary artifact, sources JAR, Javadoc JAR, detached PGP signatures for each deployed artifact, and MD5/SHA-1 checksums. The bundle script includes the POM, one primary AAR/JAR, sources and Javadoc JARs, their detached `.asc` signatures, and MD5, SHA-1, SHA-256 and SHA-512 checksums. It validates coordinates and required POM metadata before uploading.
 
 ## Release qualification
 
-This publication setup does not close any item in [Release Checklist](RELEASE_CHECKLIST.md). In particular, device/runtime validation, independent security and privacy reviews, public API/binary compatibility review, dependency/license review and model provenance checks remain separate release gates.
+A successful Central validation is not evidence that runtime or product qualification is complete. The following remain separate release gates: physical-device/backend validation, independent security and privacy review, public API/binary compatibility review, dependency/license and vulnerability review, and model provenance checks. Keep these visible and resolve them according to the project's release checklist before final publication.
