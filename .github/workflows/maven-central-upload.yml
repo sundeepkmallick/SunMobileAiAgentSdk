@@ -19,8 +19,8 @@ jobs:
         env:
           CONFIRMATION: ${{ inputs.confirmation }}
         run: |
-          test "$CONFIRMATION" = "UPLOAD-0.1.0-rc.1" || {
-            echo "Confirmation must be exactly UPLOAD-0.1.0-rc.1"
+          test "$CONFIRMATION" = "UPLOAD-0.1.0-rc.2" || {
+            echo "Confirmation must be exactly UPLOAD-0.1.0-rc.2"
             exit 1
           }
 
@@ -62,7 +62,7 @@ jobs:
       - name: Retain bundle for audit
         uses: actions/upload-artifact@v4
         with:
-          name: maven-central-bundle-0.1.0-rc.1
+          name: maven-central-bundle-0.1.0-rc.2
           path: build/central-bundle.zip
           if-no-files-found: error
           retention-days: 30
