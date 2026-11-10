@@ -25,11 +25,12 @@ Sample package: com.sunmobile.aiagent.sample
 - [x] User manually verified the portrait → landscape → portrait transition.
 - [x] User confirmed the mock action worked after rotation.
 - [x] User confirmed the mock action worked after backgrounding and resuming the app.
-- [ ] No duplicate requests independently verified after resume.
-- [ ] Mock action executed during a fresh log-capture interval and corresponding logs reviewed.
+- [x] User reports no duplicate requests during repeated lifecycle transitions and mock-action checks.
+- [x] User reports no ANRs or unexpected errors during the manual lifecycle scenarios.
+- [ ] Mock action explicitly triggered between logcat clear and log capture; action-correlated log review remains outstanding.
 - [ ] Sensitive-data/log-redaction review completed.
 
-The earlier attempted log capture cleared logcat but did not establish that a mock action was exercised during the capture interval (the explanatory shell comment was pasted into zsh as a command). The user's subsequent manual lifecycle test confirms the UI and mock action behaved as expected after rotation and resume, but a fresh action-correlated log review is still outstanding.
+On the latest log check, the user ran `adb logcat -c`, then captured `adb logcat -d` to `validation/evidence/emulator-lifecycle-log.txt`; the supplied grep returned no matching lines for `FATAL EXCEPTION`, `ANR in`, `OutOfMemoryError`, or `SecurityException`. This is a clean grep result for that captured interval. The command transcript does not show a mock action being triggered between clearing and capturing logcat, so it is not yet action-correlated evidence. The user separately reports that repeated transitions and mock actions worked without duplicate requests, ANRs, or unexpected errors.
 
 ## Core test results
 
@@ -58,12 +59,12 @@ These are Gradle task/check results. Because most tasks were up-to-date, they do
 
 ## Result
 
-**PASS for the manually reported emulator lifecycle scenarios; PARTIAL PASS for the overall emulator validation.**
+**PASS for the reported emulator lifecycle scenarios; PARTIAL PASS for overall emulator validation.**
 
-The user manually confirmed portrait → landscape → portrait and successful mock-action execution after rotation and after resume. This is user-reported functional evidence; no independent video/log artifact was supplied. Action-correlated log review, duplicate-request verification, sensitive-data/log-redaction review, and physical-device/backend validation remain open.
+The user confirms portrait → landscape → portrait, successful mock-action execution after rotation and resume, no duplicate requests, and no ANRs or unexpected errors during repeated transitions. The supplied log grep returned no matching crash/error signatures, but the transcript does not establish that the mock action occurred between logcat clear and capture. Sensitive-data/log-redaction review and physical-device/backend validation remain open.
 
 ## Follow-up evidence required
 
-1. Clear logcat, trigger the mock action after rotation/resume, save the resulting log, and review it for crashes, ANRs, memory errors, security exceptions, duplicate requests, and sensitive data.
+1. For action-correlated log evidence, clear logcat, trigger the mock action after rotation/resume, then save and review the log for crashes, ANRs, memory errors, security exceptions, and sensitive data.
 2. Record whether output is expected to reset on Activity recreation; the sample currently does not save the displayed output across recreation.
 3. Continue with supported physical-device and backend-specific validation as described in the release checklist.
