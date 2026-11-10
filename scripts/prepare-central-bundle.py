@@ -25,7 +25,8 @@ ARTIFACTS = (
     "agent-adk",
     "agent-firebase",
     "agent-litertlm",
-    "agent-mlkit agent-gemini-nano",
+    "agent-mlkit",
+    "agent-gemini-nano",
 )
 CHECKSUMS = ("md5", "sha1", "sha256", "sha512")
 CENTRAL_UPLOAD_URL = "https://central.sonatype.com/api/v1/publisher/upload"
