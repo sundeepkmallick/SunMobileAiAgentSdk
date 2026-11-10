@@ -1,16 +1,18 @@
 # Maven publication: 0.1.0-rc.2
 
-This document describes local verification and the controlled Sonatype Central Portal staging upload for the six SDK modules. The verified namespace is `io.github.sundeepkmallick`. The release candidate remains `0.1.0-rc.1`; this workflow does not create a stable `0.1.0` release or a Git tag.
+This document describes local verification and the controlled Sonatype Central Portal staging upload for the six SDK modules. The verified namespace is `io.github.sundeepkmallick`. The release candidate remains `0.1.0-rc.2`; this workflow does not create a stable `0.1.0` release or a Git tag.
 
 ## Published modules and coordinates
 
 | Module | Maven artifact |
 | --- | --- |
-| `:agent-core` | `io.github.sundeepkmallick:agent-core:0.1.0-rc.1` |
-| `:agent-adk` | `io.github.sundeepkmallick:agent-adk:0.1.0-rc.1` |
-| `:agent-firebase` | `io.github.sundeepkmallick:agent-firebase:0.1.0-rc.1` |
-| `:agent-litertlm` | `io.github.sundeepkmallick:agent-litertlm:0.1.0-rc.1` |
-| `:agent-gemini-nano` | `io.github.sundeepkmallick:agent-gemini-nano:0.1.0-rc.1` |
+| `:agent-core` | `io.github.sundeepkmallick:agent-core:0.1.0-rc.2` |
+| `:agent-adk` | `io.github.sundeepkmallick:agent-adk:0.1.0-rc.2` |
+| `:agent-firebase` | `io.github.sundeepkmallick:agent-firebase:0.1.0-rc.2` |
+| `:agent-litertlm` | `io.github.sundeepkmallick:agent-litertlm:0.1.0-rc.2` |
+| `:agent-mlkit` | `io.github.sundeepkmallick:agent-mlkit:0.1.0-rc.2` |
+| `:agent-gemini-nano` | `io.github.sundeepkmallick:agent-gemini-nano:0.1.0-rc.2` |
+| `:agent-gemini-nano` | `io.github.sundeepkmallick:agent-gemini-nano:0.1.0-rc.2` |
 
 The sample application is not published.
 
@@ -23,7 +25,7 @@ Requires JDK 17 and an installed Android SDK matching the project compile SDK.
 python3 scripts/verify-maven-local.py
 ```
 
-The local publication task writes only to `mavenLocal()`. The verification script checks all five POM coordinates and metadata and requires source and Javadoc JARs. It does not contact a remote repository.
+The local publication task writes only to `mavenLocal()`. The verification script checks all six POM coordinates and metadata and requires source and Javadoc JARs. It does not contact a remote repository.
 
 ## Sonatype Central staging upload
 
@@ -57,7 +59,7 @@ Publish the corresponding public OpenPGP key to a public keyserver before attemp
 1. Review and merge the publishing workflow.
 2. Configure the `maven-central-staging` environment secrets.
 3. Open Actions → Upload Maven Central staging deployment → Run workflow.
-4. Enter exactly `UPLOAD-0.1.0-rc.1`.
+4. Enter exactly `UPLOAD-0.1.0-rc.2`.
 5. Inspect the uploaded bundle and wait for Sonatype validation.
 6. Review all six components and metadata in Central Portal. Only then, as a separate explicit action, select Publish.
 
