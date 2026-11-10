@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify the five 0.1.0-rc.1 SDK publications in the local Maven repository."""
+"""Verify the five 0.1.0-rc.2 SDK publications in the local Maven repository."""
 from pathlib import Path
 import os
 import sys
@@ -12,7 +12,7 @@ ARTIFACTS = (
     "agent-adk",
     "agent-firebase",
     "agent-litertlm",
-    "agent-gemini-nano",
+    "agent-mlkit", "agent-gemini-nano",
 )
 repo = Path(os.environ.get("MAVEN_LOCAL_REPO", Path.home() / ".m2/repository"))
 errors = []
