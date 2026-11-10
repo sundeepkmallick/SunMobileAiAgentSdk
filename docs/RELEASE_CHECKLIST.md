@@ -18,7 +18,8 @@ See [EMULATOR_AND_DEVICE_TESTING.md](EMULATOR_AND_DEVICE_TESTING.md) for the det
 - [x] Local `./gradlew test` completed successfully (78 actionable tasks reported up-to-date).
 - [x] Local `:agent-adk:check`, `:agent-firebase:check`, `:agent-gemini-nano:check` and `:agent-litertlm:check` tasks completed successfully. Most tasks were up-to-date; these results do not prove live backend or supported-device integration.
 - [x] Available core XML reports show 8 tests, 0 failures, 0 errors and 0 skipped across AgentSessionTest, ToolExecutorTest and ToolRegistryTest. The XML timestamps are 2026-11-09 and the core test task was restored from cache; do not treat this as a fresh 2026-11-10 test run.
-- [ ] Emulator lifecycle evidence is partial: launch and background/foreground smoke checks are positive, but manual rotation, mock-action behavior across rotation/resume, and action-correlated log review remain open. See [2026-11-10 emulator evidence](validation/evidence/emulator-lifecycle-2026-11-10.md).
+- [x] User-reported emulator lifecycle scenarios passed: portrait → landscape → portrait, mock action after rotation and after resume, and repeated transitions without duplicate requests, ANRs or unexpected errors. See [2026-11-10 emulator evidence](validation/evidence/emulator-lifecycle-2026-11-10.md).
+- [ ] Action-correlated log review and sensitive-data/log-redaction review remain open; the latest grep returned no matching crash/error signatures, but the command transcript does not show a mock action between logcat clear and capture.
 
 ## Required before stable 0.1.0
 
