@@ -70,7 +70,7 @@ The latest successful SDK workflow on `main` is [CI run #137](https://github.com
 
 ## Maven publication candidate
 
-All five SDK modules have a local-only Maven publication setup for `0.1.0-rc.1`. It publishes to `mavenLocal()` only; no remote repository, release credential or stable `0.1.0` tag is configured. See [Maven publication guide](docs/MAVEN_PUBLICATION.md) for artifact coordinates, signing configuration, local verification and an independent consumer fixture.
+All five SDK modules have a local-only Maven publication setup for `0.1.0-rc.1` under group `io.github.sundeepkmallick`. The namespace is verified in Sonatype Central. The current build still publishes to `mavenLocal()` only; remote publishing configuration and credentials are not yet enabled, and no stable `0.1.0` tag is configured. See [Maven publication guide](docs/MAVEN_PUBLICATION.md) for artifact coordinates, signing configuration, local verification and an independent consumer fixture.
 
 ## Documentation
 

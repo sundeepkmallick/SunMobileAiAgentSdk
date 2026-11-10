@@ -9,7 +9,7 @@ plugins {
 }
 
 allprojects {
-    group = "com.sunmobile.aiagent"
+    group = "io.github.sundeepkmallick"
     version = "0.1.0-rc.1"
 }
 
@@ -38,7 +38,7 @@ gradle.projectsEvaluated {
         module.extensions.configure<PublishingExtension> {
             publications {
                 create<MavenPublication>("maven") {
-                    groupId = "com.sunmobile.aiagent"
+                    groupId = rootProject.group.toString()
                     artifactId = module.name
                     version = rootProject.version.toString()
                     from(component)

@@ -6,7 +6,7 @@ import sys
 import xml.etree.ElementTree as ET
 
 VERSION = "0.1.0-rc.1"
-GROUP_PATH = Path("com/sunmobile/aiagent")
+GROUP_PATH = Path("io/github/sundeepkmallick")
 ARTIFACTS = (
     "agent-core",
     "agent-adk",
@@ -30,7 +30,7 @@ for artifact in ARTIFACTS:
         actual = root.findtext("m:version", namespaces=ns)
         group = root.findtext("m:groupId", namespaces=ns)
         artifact_id = root.findtext("m:artifactId", namespaces=ns)
-        if (group, artifact_id, actual) != ("com.sunmobile.aiagent", artifact, VERSION):
+        if (group, artifact_id, actual) != ("io.github.sundeepkmallick", artifact, VERSION):
             errors.append(f"incorrect coordinates in {pom}: {(group, artifact_id, actual)}")
         for required in ("name", "description", "url", "licenses", "developers", "scm"):
             if root.find(f"m:{required}", ns) is None:

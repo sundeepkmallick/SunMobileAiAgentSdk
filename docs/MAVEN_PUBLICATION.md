@@ -1,18 +1,18 @@
 # Maven publication: 0.1.0-rc.1
 
-This document describes the **local-only** Maven publication candidate. It does not publish to Maven Central, Sonatype, GitHub Packages or any other remote repository. The project remains at `0.1.0-rc.1`; this work does not create a stable `0.1.0` release or tag.
+This document describes the **local-only** Maven publication candidate. The Sonatype Central namespace `io.github.sundeepkmallick` has been verified. This configuration does not yet publish to Maven Central or any other remote repository. The project remains at `0.1.0-rc.1`; this work does not create a stable `0.1.0` release or tag.
 
 ## Published modules and coordinates
 
-All five SDK modules use group `com.sunmobile.aiagent` and version `0.1.0-rc.1`.
+All five SDK modules use group `io.github.sundeepkmallick` and version `0.1.0-rc.1`.
 
 | Module | Maven artifact |
 | --- | --- |
-| `:agent-core` | `com.sunmobile.aiagent:agent-core:0.1.0-rc.1` |
-| `:agent-adk` | `com.sunmobile.aiagent:agent-adk:0.1.0-rc.1` |
-| `:agent-firebase` | `com.sunmobile.aiagent:agent-firebase:0.1.0-rc.1` |
-| `:agent-litertlm` | `com.sunmobile.aiagent:agent-litertlm:0.1.0-rc.1` |
-| `:agent-gemini-nano` | `com.sunmobile.aiagent:agent-gemini-nano:0.1.0-rc.1` |
+| `:agent-core` | `io.github.sundeepkmallick:agent-core:0.1.0-rc.1` |
+| `:agent-adk` | `io.github.sundeepkmallick:agent-adk:0.1.0-rc.1` |
+| `:agent-firebase` | `io.github.sundeepkmallick:agent-firebase:0.1.0-rc.1` |
+| `:agent-litertlm` | `io.github.sundeepkmallick:agent-litertlm:0.1.0-rc.1` |
+| `:agent-gemini-nano` | `io.github.sundeepkmallick:agent-gemini-nano:0.1.0-rc.1` |
 
 The sample application is intentionally not published.
 
