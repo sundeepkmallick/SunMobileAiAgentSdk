@@ -2,7 +2,7 @@
 
 This guide separates tests that can be completed without physical hardware from tests that must remain pending until supported devices are available. It is intended for the `0.1.0-rc.1` release candidate.
 
-**Release status:** emulator results do not qualify the SDK for stable release. Do not mark hardware-dependent checks complete based on an emulator run.
+**Current constraint:** no physical Android device is available for this validation cycle. Complete and review feasible non-hardware work on release/0.1.0-rc.1, then merge that work to main only after applicable CI and review gates pass. Physical-device checks below remain **DEFERRED / NOT RUN**—not failed and not passed. An RC merge is not stable-release approval.
 
 ## 1. Test environment and evidence
 
@@ -51,14 +51,14 @@ adb install -r sample-app/build/outputs/apk/debug/sample-app-debug.apk
 
 Run and record these checks:
 
-- [ ] Sample app launches without crashing.
-- [ ] Mock/offline research flow completes and is visibly labelled as mock/offline.
+- [x] Sample app launches without crashing (user-reported emulator smoke check).
+- [x] Mock/offline research flow completes and is visibly labelled as mock/offline (manual lifecycle test reported successful mock actions).
 - [ ] Empty, malformed and repeated user inputs are handled without a crash.
-- [ ] Rotate the emulator while the screen is active; verify state and lifecycle behavior.
-- [ ] Background and foreground the app; verify no unexpected work or duplicate requests.
+- [x] Rotate the emulator while the screen is active; portrait → landscape → portrait passed (user-reported).
+- [x] Background and foreground the app; mock action after resume passed and no duplicate requests reported.
 - [ ] Navigate away and return; verify expected session/UI behavior.
 - [ ] Clear the app/session and verify prior conversation content is no longer shown where clearing is expected.
-- [ ] Inspect logcat for crashes, accidental prompt/response/token logging and unexpected exceptions.
+- [ ] Inspect action-correlated logcat for crashes, accidental prompt/response/token logging and unexpected exceptions. Latest grep returned no matching FATAL EXCEPTION/ANR/OutOfMemoryError/SecurityException strings, but mock action during that exact capture window was not demonstrated; privacy review is still open.
 - [ ] Run the relevant unit tests and retain the Gradle test reports.
 
 For logcat, capture a bounded test window and redact any secrets before sharing:
@@ -103,7 +103,10 @@ An emulator may be useful for API wiring or an inference smoke test only if the 
 
 Use non-production development projects and least-privilege test credentials. Confirm network access and configuration are correct. Test authentication failure, permission denial, service unavailable and request cancellation. Never commit credentials or paste them into issue comments.
 
-## 4. Tests that must wait for physical devices
+## 4. Physical-device tests deferred for this release candidate
+
+No physical device is currently available. Keep every item in this section pending and do not describe emulator results as device qualification. These checks are deferred rather than waived:
+
 
 Keep the following release gates open until run on supported physical hardware:
 
@@ -118,7 +121,9 @@ Keep the following release gates open until run on supported physical hardware:
 
 For each device, record manufacturer, exact model, Android version/API, build fingerprint, ABI, available RAM/storage, backend/model version, test date, result and logs. Do not claim support for a device family from a single unrepresentative device.
 
-## 5. Security and privacy review (not replaced by emulator testing)
+## 5. Security and privacy review (can be performed without physical hardware)
+
+These source/configuration reviews can proceed now and should be completed before merging the non-hardware work to main. Physical-device testing remains an additional later gate.
 
 Review the core tool boundary and host integration:
 
