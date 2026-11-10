@@ -1,6 +1,6 @@
-# Maven publication: 0.1.0-rc.1
+# Maven publication: 0.1.0-rc.2
 
-This document describes local verification and the controlled Sonatype Central Portal staging upload for the five SDK modules. The verified namespace is `io.github.sundeepkmallick`. The release candidate remains `0.1.0-rc.1`; this workflow does not create a stable `0.1.0` release or a Git tag.
+This document describes local verification and the controlled Sonatype Central Portal staging upload for the six SDK modules. The verified namespace is `io.github.sundeepkmallick`. The release candidate remains `0.1.0-rc.1`; this workflow does not create a stable `0.1.0` release or a Git tag.
 
 ## Published modules and coordinates
 
@@ -33,7 +33,7 @@ Sonatype does not currently provide an official Gradle plugin for the Central Pu
 - [Central Portal Publisher API](https://central.sonatype.org/publish/publish-portal-api/)
 - [Central publishing requirements](https://central.sonatype.org/publish/requirements/)
 
-The manually dispatched workflow is `.github/workflows/maven-central-upload.yml`. It requires the exact confirmation string `UPLOAD-0.1.0-rc.1`, builds and signs all five publications, validates required POM metadata and signatures, creates checksums, retains the bundle as a workflow artifact, and uploads it with `publishingType=USER_MANAGED`.
+The manually dispatched workflow is `.github/workflows/maven-central-upload.yml`. It requires the exact confirmation string `UPLOAD-0.1.0-rc.2`, builds and signs all six publications, validates required POM metadata and signatures, creates checksums, retains the bundle as a workflow artifact, and uploads it with `publishingType=USER_MANAGED`.
 
 **This upload does not publish to Maven Central.** After the upload, Sonatype validates the deployment. A maintainer must inspect the deployment in the Central Portal and explicitly select Publish. The workflow never calls the publish endpoint and never uses automatic publishing.
 
@@ -59,7 +59,7 @@ Publish the corresponding public OpenPGP key to a public keyserver before attemp
 3. Open Actions → Upload Maven Central staging deployment → Run workflow.
 4. Enter exactly `UPLOAD-0.1.0-rc.1`.
 5. Inspect the uploaded bundle and wait for Sonatype validation.
-6. Review all five components and metadata in Central Portal. Only then, as a separate explicit action, select Publish.
+6. Review all six components and metadata in Central Portal. Only then, as a separate explicit action, select Publish.
 
 Published Central components are immutable. Do not select Publish until the version, coordinates, POM metadata, signatures, dependencies and release qualification are accepted.
 
