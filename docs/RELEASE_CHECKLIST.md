@@ -13,6 +13,13 @@ See [EMULATOR_AND_DEVICE_TESTING.md](EMULATOR_AND_DEVICE_TESTING.md) for the det
 - [x] Sample app labels its backend and research content as mocked/offline and makes no network calls; no credentials are present in the sample source.
 - [x] SunCommerzAssociate integration CI passed after the host test fix: [run #37](https://github.com/sundeepkmallick/SunCommerzAssociate/actions/runs/42601525623). The host PR remains draft and this does not establish device/runtime behavior.
 
+## Additional local validation reported on 2026-11-10
+
+- [x] Local `./gradlew test` completed successfully (78 actionable tasks reported up-to-date).
+- [x] Local `:agent-adk:check`, `:agent-firebase:check`, `:agent-gemini-nano:check` and `:agent-litertlm:check` tasks completed successfully. Most tasks were up-to-date; these results do not prove live backend or supported-device integration.
+- [x] Available core XML reports show 8 tests, 0 failures, 0 errors and 0 skipped across AgentSessionTest, ToolExecutorTest and ToolRegistryTest. The XML timestamps are 2026-11-09 and the core test task was restored from cache; do not treat this as a fresh 2026-11-10 test run.
+- [ ] Emulator lifecycle evidence is partial: launch and background/foreground smoke checks are positive, but manual rotation, mock-action behavior across rotation/resume, and action-correlated log review remain open. See [2026-11-10 emulator evidence](validation/evidence/emulator-lifecycle-2026-11-10.md).
+
 ## Required before stable 0.1.0
 
 - [ ] Emulator test plan executed and evidence recorded where the relevant backend/runtime is supported by the emulator. Emulator results do not replace physical-device tests.
