@@ -18,7 +18,8 @@ val publishedSdkModules = listOf(
     ":agent-adk",
     ":agent-firebase",
     ":agent-litertlm",
-    ":agent-mlkit"
+    ":agent-mlkit",
+    ":agent-gemini-nano"
 )
 
 subprojects {
@@ -85,6 +86,6 @@ gradle.projectsEvaluated {
 
 tasks.register("publishSdkToMavenLocal") {
     group = "publishing"
-    description = "Publishes all five SDK modules to the local Maven repository only."
+    description = "Publishes all six SDK modules to the local Maven repository only."
     dependsOn(publishedSdkModules.map { "$it:publishToMavenLocal" })
 }
