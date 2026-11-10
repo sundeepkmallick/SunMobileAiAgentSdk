@@ -2,7 +2,7 @@
 
 A reusable Kotlin/Android agent SDK that separates backend-neutral agent infrastructure from host-application business logic.
 
-> **Status: 0.x / experimental.** The core API, ADK/Firebase/LiteRT-LM/Gemini Nano adapters, offline sample and CI are implemented. The SDK CI currently passes core unit tests and compiles the sample plus all adapter modules. SunCommerzAssociate integration has been implemented on its dedicated PR branch; that host PR remains draft and its latest Android unit-test workflow is not green. Device validation, security review and release qualification remain outstanding.
+> **Status: 0.1.0-rc.1 review candidate (not a stable release).** The core API, ADK/Firebase/LiteRT-LM/Gemini Nano adapters, offline sample and CI are implemented. SDK CI on `main` passed core unit tests and compiles the sample plus all adapter modules ([run #137](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42604253210)). SunCommerzAssociate integration CI passed after its unit-test fix ([host run #37](https://github.com/sundeepkmallick/SunCommerzAssociate/actions/runs/42601525623)); its PR remains draft. Physical-device/runtime validation, independent security and privacy reviews, API/binary compatibility review, model provenance/license verification and stable-release qualification remain outstanding.
 
 ## Modules
 
@@ -37,7 +37,7 @@ See [Modules](docs/MODULES.md), [Public API](docs/PUBLIC_API.md) and [Tool Devel
 
 ## SunCommerzAssociate integration
 
-The integration is implemented in [SunCommerzAssociate PR #4](https://github.com/sundeepkmallick/SunCommerzAssociate/pull/4), which is currently a draft. The host app consumes the SDK as a Git submodule and Gradle composite build; no Maven publication is required.
+The integration is implemented in [SunCommerzAssociate PR #4](https://github.com/sundeepkmallick/SunCommerzAssociate/pull/4), which remains a draft. Its latest observed Android CI run passed app compilation and unit tests ([run #37](https://github.com/sundeepkmallick/SunCommerzAssociate/actions/runs/42601525623)). The host app consumes the SDK as a Git submodule plus Gradle composite build; no Maven publication is required.
 
 - Firebase AI Logic and LiteRT-LM use the SDK's ADK runner, registry, schema validation and policy executor.
 - BOPIS tools, instructions, repositories, identity/order scoping, fallback, approval and UI remain host-owned.
@@ -45,7 +45,7 @@ The integration is implemented in [SunCommerzAssociate PR #4](https://github.com
 - Gemini Nano intentionally remains on the host ML Kit Agent API + AppFunctions implementation. AppFunctions perform their own authorization and are not intercepted by SDK AgentPolicy.
 - The host retains model download/catalogue/checksum/device admission and serializes LiteRT-LM model lifecycle.
 
-The host PR is not yet production-ready: its latest Android CI run compiled the app but failed two unit tests in `LocalModelCompatibilityTest`. See [the migration guide](docs/SUNCOMMERZ_MIGRATION.md) and [roadmap](docs/ROADMAP.md).
+A green host CI run proves compile/unit-test success only. Device validation, Firebase credential/App Check runtime tests, Gemini Nano/AppFunctions behavior and production rollout review remain outstanding. See the [migration guide](docs/SUNCOMMERZ_MIGRATION.md) and [roadmap](docs/ROADMAP.md).
 
 ## Design and safety principles
 
@@ -66,7 +66,7 @@ Requires JDK 17; an Android SDK is required for Android modules and the sample.
 ./gradlew :sample-app:assembleDebug :agent-adk:assembleDebug :agent-firebase:assembleDebug :agent-litertlm:assembleDebug :agent-gemini-nano:assembleDebug
 ```
 
-CI run [#123](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42594131318) passed both `core-tests` and `sample-build`, including compilation of all four adapter modules. This does not establish device/runtime behavior, production readiness or host-app regression success.
+The latest successful SDK workflow on `main` is [CI run #137](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42604253210). It passed core unit tests and compiled the sample plus all adapter modules. The candidate branch has its own PR CI gate; see the PR checks before approving it. This evidence does not establish device/runtime behavior, production readiness or full host-app regression success.
 
 ## Documentation
 

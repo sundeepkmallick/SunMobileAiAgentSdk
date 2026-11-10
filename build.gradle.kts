@@ -6,5 +6,5 @@ plugins {
 
 allprojects {
     group = "com.sunmobile.aiagent"
-    version = "0.1.0-SNAPSHOT"
+    version = "0.1.0-rc.1"
 }

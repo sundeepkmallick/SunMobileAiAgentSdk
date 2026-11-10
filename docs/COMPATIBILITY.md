@@ -16,16 +16,16 @@ This document separates build evidence from runtime/device support. A successful
 
 ## Verified SDK CI
 
-SDK PR #1 head commit `ebfecc9669eac07d61608b1ca99513b93fa290c1` was tested by [CI run #123](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42594131318) on 2026-11-09:
+The current `main` commit `2eb3d6db4759cc855f5853e6a0962d698c1a8647` passed [CI run #137](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42604253210) on 2026-11-09:
 
 - `core-tests`: passed, including `:agent-core:test`.
 - `sample-build`: passed, including `:sample-app:assembleDebug`, `:agent-adk:assembleDebug`, `:agent-firebase:assembleDebug`, `:agent-litertlm:assembleDebug` and `:agent-gemini-nano:assembleDebug`.
 
-This confirms the tasks above completed on that commit. It does not establish physical-device behavior, production readiness or host-app regression success.
+The `0.1.0-rc.1` candidate branch is subject to its own PR workflow. The main-branch result above is baseline evidence, not a substitute for candidate-commit checks.
 
 ## SunCommerzAssociate integration status
 
-[SunCommerzAssociate PR #4](https://github.com/sundeepkmallick/SunCommerzAssociate/pull/4) contains the host integration and remains a draft. Its latest observed Android workflow run [#35](https://github.com/sundeepkmallick/SunCommerzAssociate/actions/runs/42591908382) reached `:app:testDebugUnitTest` but failed two tests in `LocalModelCompatibilityTest` (4 tests executed, 2 failed). The app compiled far enough to execute unit tests; the workflow is not green. Resolve and rerun these failures before treating host integration as validated.
+[SunCommerzAssociate PR #4](https://github.com/sundeepkmallick/SunCommerzAssociate/pull/4) remains a draft. After the `LocalModelCompatibilityTest` corrections, the latest host workflow [run #37](https://github.com/sundeepkmallick/SunCommerzAssociate/actions/runs/42601525623) passed on commit `784fa34033bbe081988568bebe9a337e676b8f22`. This is compile/unit-test evidence only; it does not validate physical devices, Firebase credentials/App Check, Gemini Nano service availability, AppFunctions dispatch or model performance.
 
 ## Required runtime/device evidence
 
@@ -42,3 +42,10 @@ Before declaring a backend supported for a release, record:
 - Gemini Nano feature availability and host AppFunction authorization/dispatch behavior.
 
 Gemini Nano availability depends on supported device/runtime conditions. AppFunctions declarations and permissions remain host responsibilities. CI compilation cannot replace physical-device coverage.
+
+
+## Current release-candidate hardware constraint
+
+No physical Android device is available for the current 0.1.0-rc.1 validation cycle. The API 37 / arm64-v8a emulator lifecycle evidence is useful emulator evidence only; it does not establish support for Gemini Nano, LiteRT-LM inference, Firebase/ADK end-to-end device behavior, thermal/battery performance or low-memory hardware.
+
+The team may finish non-hardware work on release/0.1.0-rc.1 and merge reviewed changes to main after applicable CI and maintainer review. Keep physical-device backend qualification explicitly **DEFERRED / NOT RUN**. Do not claim those backends/device classes are validated or publish stable 0.1.0 based solely on the emulator and build evidence. Revisit this matrix when supported physical hardware becomes available.
