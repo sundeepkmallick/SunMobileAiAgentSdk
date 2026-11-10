@@ -10,7 +10,7 @@ plugins {
 
 allprojects {
     group = "io.github.sundeepkmallick"
-    version = "0.1.0-rc.1"
+    version = "0.1.0-rc.2"
 }
 
 val publishedSdkModules = listOf(
@@ -18,7 +18,7 @@ val publishedSdkModules = listOf(
     ":agent-adk",
     ":agent-firebase",
     ":agent-litertlm",
-    ":agent-gemini-nano"
+    ":agent-mlkit"
 )
 
 subprojects {
