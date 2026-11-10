@@ -1,4 +1,9 @@
-plugins { alias(libs.plugins.android.library) }
+description = "Firebase AI Logic model factory for the SunMobile AI Agent SDK."
+
+plugins {
+    alias(libs.plugins.android.library)
+}
+
 android {
     namespace = "com.sunmobile.aiagent.firebase"
     compileSdk {
@@ -7,7 +12,14 @@ android {
         }
     }
     defaultConfig { minSdk = 26 }
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
+
 dependencies {
     api(project(":agent-adk"))
     implementation(platform(libs.firebase.bom))

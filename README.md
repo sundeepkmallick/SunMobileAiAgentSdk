@@ -68,6 +68,10 @@ Requires JDK 17; an Android SDK is required for Android modules and the sample.
 
 The latest successful SDK workflow on `main` is [CI run #137](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42604253210). It passed core unit tests and compiled the sample plus all adapter modules. The candidate branch has its own PR CI gate; see the PR checks before approving it. This evidence does not establish device/runtime behavior, production readiness or full host-app regression success.
 
+## Maven publication candidate
+
+All five SDK modules have a local-only Maven publication setup for `0.1.0-rc.1`. It publishes to `mavenLocal()` only; no remote repository, release credential or stable `0.1.0` tag is configured. See [Maven publication guide](docs/MAVEN_PUBLICATION.md) for artifact coordinates, signing configuration, local verification and an independent consumer fixture.
+
 ## Documentation
 
 - [Architecture](docs/ARCHITECTURE.md)
@@ -79,6 +83,7 @@ The latest successful SDK workflow on `main` is [CI run #137](https://github.com
 - [SunCommerzAssociate Migration](docs/SUNCOMMERZ_MIGRATION.md)
 - [Roadmap](docs/ROADMAP.md)
 - [Release Checklist](docs/RELEASE_CHECKLIST.md)
+- [Maven Publication](docs/MAVEN_PUBLICATION.md)
 
 ## License
 
