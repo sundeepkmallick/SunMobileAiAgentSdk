@@ -2,7 +2,7 @@
 
 A reusable Kotlin/Android agent SDK that separates backend-neutral agent infrastructure from host-application business logic.
 
-> **Status: 0.1.0-rc.1 review candidate (not a stable release).** The core API, ADK/Firebase/LiteRT-LM/Gemini Nano adapters, offline sample and CI are implemented. SDK CI on `main` passed core unit tests and compiles the sample plus all adapter modules ([run #137](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42604253210)). SunCommerzAssociate integration CI passed after its unit-test fix ([host run #37](https://github.com/sundeepkmallick/SunCommerzAssociate/actions/runs/42601525623)); its PR remains draft. Physical-device/runtime validation, independent security and privacy reviews, API/binary compatibility review, model provenance/license verification and stable-release qualification remain outstanding.
+> **Status: 0.1.0-rc.2 review candidate (not a stable release).** The core API, ADK/Firebase/LiteRT-LM/Gemini Nano adapters, offline sample and CI are implemented. SDK CI on `main` passed core unit tests and compiles the sample plus all adapter modules ([run #137](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42604253210)). SunCommerzAssociate integration CI passed after its unit-test fix ([host run #37](https://github.com/sundeepkmallick/SunCommerzAssociate/actions/runs/42601525623)); its PR remains draft. Physical-device/runtime validation, independent security and privacy reviews, API/binary compatibility review, model provenance/license verification and stable-release qualification remain outstanding.
 
 ## Modules
 
@@ -10,7 +10,8 @@ A reusable Kotlin/Android agent SDK that separates backend-neutral agent infrast
 - `:agent-adk`: Google ADK runner, in-memory session service, streaming/event translation and dynamic bridge from the core registry to ADK tools.
 - `:agent-firebase`: Firebase AI Logic model factory for the shared ADK adapter.
 - `:agent-litertlm`: LiteRT-LM model factory for a host-installed model file.
-- `:agent-gemini-nano`: ML Kit Agent API adapter using host-declared Android AppFunctions; dynamic SDK tools are intentionally unsupported.
+- `:agent-mlkit`: first-class ML Kit GenAI Agent + Prompt backend using host-declared Android AppFunctions; dynamic SDK tools are intentionally unsupported.
+- `:agent-gemini-nano`: legacy ML Kit adapter retained for compatibility; new integrations should use `:agent-mlkit`.
 - `:sample-app`: offline Android Research Assistant using explicitly labelled mock data; it makes no network calls.
 
 ## Quick start
@@ -63,7 +64,7 @@ Requires JDK 17; an Android SDK is required for Android modules and the sample.
 
 ```bash
 ./gradlew :agent-core:test
-./gradlew :sample-app:assembleDebug :agent-adk:assembleDebug :agent-firebase:assembleDebug :agent-litertlm:assembleDebug :agent-gemini-nano:assembleDebug
+./gradlew :sample-app:assembleDebug :agent-adk:assembleDebug :agent-firebase:assembleDebug :agent-litertlm:assembleDebug :agent-mlkit:assembleDebug :agent-gemini-nano:assembleDebug
 ```
 
 The latest successful SDK workflow on `main` is [CI run #137](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42604253210). It passed core unit tests and compiled the sample plus all adapter modules. The candidate branch has its own PR CI gate; see the PR checks before approving it. This evidence does not establish device/runtime behavior, production readiness or full host-app regression success.
