@@ -22,15 +22,14 @@ Sample package: com.sunmobile.aiagent.sample
 - [x] Sample app launch requested with `adb shell monkey -p com.sunmobile.aiagent.sample 1`; monkey reported one event injected.
 - [x] Activity observed as `RESUMED` and process alive after background/foreground smoke sequence.
 - [x] Earlier captured log interval contained no matching app crash signatures (`FATAL EXCEPTION`, `ANR in`, `OutOfMemoryError`, or `SecurityException`).
-- [ ] Portrait mock execution independently verified.
-- [ ] Landscape transition manually verified.
-- [ ] Return to portrait manually verified.
-- [ ] Mock action verified after rotation.
-- [ ] No duplicate requests verified after resume.
-- [ ] Mock action executed during the latest log-capture interval and corresponding logs reviewed.
+- [x] User manually verified the portrait → landscape → portrait transition.
+- [x] User confirmed the mock action worked after rotation.
+- [x] User confirmed the mock action worked after backgrounding and resuming the app.
+- [ ] No duplicate requests independently verified after resume.
+- [ ] Mock action executed during a fresh log-capture interval and corresponding logs reviewed.
 - [ ] Sensitive-data/log-redaction review completed.
 
-The latest attempt to capture logs cleared logcat and then captured it, but the explanatory shell comment was pasted into zsh as a command (`zsh: command not found: #`). The log capture therefore does **not** establish that a mock action was exercised during that interval. Repeat the capture while actually triggering the mock action in the app.
+The earlier attempted log capture cleared logcat but did not establish that a mock action was exercised during the capture interval (the explanatory shell comment was pasted into zsh as a command). The user's subsequent manual lifecycle test confirms the UI and mock action behaved as expected after rotation and resume, but a fresh action-correlated log review is still outstanding.
 
 ## Core test results
 
@@ -59,13 +58,12 @@ These are Gradle task/check results. Because most tasks were up-to-date, they do
 
 ## Result
 
-**PARTIAL PASS — emulator smoke checks and Gradle checks are positive; lifecycle validation is not complete.**
+**PASS for the manually reported emulator lifecycle scenarios; PARTIAL PASS for the overall emulator validation.**
 
-Rotation, mock-action behavior across rotation/resume, action-correlated log review, and physical-device/backend validation remain open.
+The user manually confirmed portrait → landscape → portrait and successful mock-action execution after rotation and after resume. This is user-reported functional evidence; no independent video/log artifact was supplied. Action-correlated log review, duplicate-request verification, sensitive-data/log-redaction review, and physical-device/backend validation remain open.
 
 ## Follow-up evidence required
 
-1. Manually rotate portrait → landscape → portrait and exercise the mock action before and after rotation.
-2. Clear logcat, trigger the mock action, save the resulting log, and review it for crashes, ANRs, memory errors, security exceptions, and sensitive data.
-3. Record whether output is expected to reset on Activity recreation; the sample currently does not save the displayed output across recreation.
-4. Continue with supported physical-device and backend-specific validation as described in the release checklist.
+1. Clear logcat, trigger the mock action after rotation/resume, save the resulting log, and review it for crashes, ANRs, memory errors, security exceptions, duplicate requests, and sensitive data.
+2. Record whether output is expected to reset on Activity recreation; the sample currently does not save the displayed output across recreation.
+3. Continue with supported physical-device and backend-specific validation as described in the release checklist.
