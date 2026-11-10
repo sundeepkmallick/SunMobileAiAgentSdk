@@ -42,3 +42,10 @@ Before declaring a backend supported for a release, record:
 - Gemini Nano feature availability and host AppFunction authorization/dispatch behavior.
 
 Gemini Nano availability depends on supported device/runtime conditions. AppFunctions declarations and permissions remain host responsibilities. CI compilation cannot replace physical-device coverage.
+
+
+## Current release-candidate hardware constraint
+
+No physical Android device is available for the current 0.1.0-rc.1 validation cycle. The API 37 / arm64-v8a emulator lifecycle evidence is useful emulator evidence only; it does not establish support for Gemini Nano, LiteRT-LM inference, Firebase/ADK end-to-end device behavior, thermal/battery performance or low-memory hardware.
+
+The team may finish non-hardware work on release/0.1.0-rc.1 and merge reviewed changes to main after applicable CI and maintainer review. Keep physical-device backend qualification explicitly **DEFERRED / NOT RUN**. Do not claim those backends/device classes are validated or publish stable 0.1.0 based solely on the emulator and build evidence. Revisit this matrix when supported physical hardware becomes available.
