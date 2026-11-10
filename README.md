@@ -38,12 +38,12 @@ See [Modules](docs/MODULES.md), [Public API](docs/PUBLIC_API.md) and [Tool Devel
 
 ## SunCommerzAssociate integration
 
-The integration is implemented in [SunCommerzAssociate PR #4](https://github.com/sundeepkmallick/SunCommerzAssociate/pull/4), which remains a draft. Its latest observed Android CI run passed app compilation and unit tests ([run #37](https://github.com/sundeepkmallick/SunCommerzAssociate/actions/runs/42601525623)). The host app consumes the SDK as a Git submodule plus Gradle composite build; no Maven publication is required.
+The integration is implemented in [SunCommerzAssociate PR #4](https://github.com/sundeepkmallick/SunCommerzAssociate/pull/4), which remains a draft. Its latest observed Android CI run passed app compilation and unit tests ([run #37](https://github.com/sundeepkmallick/SunCommerzAssociate/actions/runs/42601525623)). PR #4 currently consumes the already-published SDK modules and still owns Gemini Nano through its direct ML Kit + AppFunctions implementation. The new `agent-mlkit` artifact is a separate release-candidate deliverable; PR #4 must not add it until the `0.1.0-rc.2` artifact is successfully published and independently resolvable.
 
 - Firebase AI Logic and LiteRT-LM use the SDK's ADK runner, registry, schema validation and policy executor.
 - BOPIS tools, instructions, repositories, identity/order scoping, fallback, approval and UI remain host-owned.
 - The host supplies product, store, quantity and radius scope; tools are read-only and the host revalidates current inventory before approval.
-- Gemini Nano intentionally remains on the host ML Kit Agent API + AppFunctions implementation. AppFunctions perform their own authorization and are not intercepted by SDK AgentPolicy.
+- The planned migration replaces the host's direct ML Kit Agent/Prompt calls with `agent-mlkit` only after Maven Central publication. AppFunctions declarations and service implementation remain host-owned; their authorization is not intercepted by SDK AgentPolicy.
 - The host retains model download/catalogue/checksum/device admission and serializes LiteRT-LM model lifecycle.
 
 A green host CI run proves compile/unit-test success only. Device validation, Firebase credential/App Check runtime tests, Gemini Nano/AppFunctions behavior and production rollout review remain outstanding. See the [migration guide](docs/SUNCOMMERZ_MIGRATION.md) and [roadmap](docs/ROADMAP.md).
