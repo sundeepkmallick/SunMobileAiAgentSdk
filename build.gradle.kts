@@ -23,24 +23,28 @@ val publishedSdkModules = listOf(
 
 subprojects {
     if (path !in publishedSdkModules) return@subprojects
-
     apply(plugin = "maven-publish")
     apply(plugin = "signing")
+}
 
-    afterEvaluate {
-        val androidLibrary = plugins.hasPlugin("com.android.library")
+// AGP creates the release SoftwareComponent late in project configuration.
+gradle.projectsEvaluated {
+    publishedSdkModules.forEach { modulePath ->
+        val module = project(modulePath)
+        val componentName = if (module.plugins.hasPlugin("com.android.library")) "release" else "java"
+        val component = module.components.findByName(componentName)
+            ?: throw GradleException("Cannot publish $modulePath: component '$componentName' was not created.")
 
-        extensions.configure<PublishingExtension> {
+        module.extensions.configure<PublishingExtension> {
             publications {
                 create<MavenPublication>("maven") {
                     groupId = "com.sunmobile.aiagent"
-                    artifactId = project.name
+                    artifactId = module.name
                     version = rootProject.version.toString()
-                    from(components[if (androidLibrary) "release" else "java"])
-
+                    from(component)
                     pom {
-                        name.set("SunMobile AI Agent SDK - ${project.name}")
-                        description.set(project.description ?: "SunMobile AI Agent SDK module ${project.name}")
+                        name.set("SunMobile AI Agent SDK - ${module.name}")
+                        description.set(module.description ?: "SunMobile AI Agent SDK module ${module.name}")
                         url.set("https://github.com/sundeepkmallick/SunMobileAiAgentSdk")
                         licenses {
                             license {
@@ -64,22 +68,16 @@ subprojects {
                     }
                 }
             }
-            // Deliberately local-only. No remote Maven repository is configured.
-            repositories {
-                mavenLocal()
-            }
+            repositories { mavenLocal() }
         }
 
-        extensions.configure<SigningExtension> {
-            val signingKey = providers.gradleProperty("signingKey").orNull
-                ?: System.getenv("SIGNING_KEY")
-            val signingPassword = providers.gradleProperty("signingPassword").orNull
-                ?: System.getenv("SIGNING_PASSWORD")
-
-            isRequired = !signingKey.isNullOrBlank() && !signingPassword.isNullOrBlank()
+        module.extensions.configure<SigningExtension> {
+            val key = module.providers.gradleProperty("signingKey").orNull ?: System.getenv("SIGNING_KEY")
+            val password = module.providers.gradleProperty("signingPassword").orNull ?: System.getenv("SIGNING_PASSWORD")
+            isRequired = !key.isNullOrBlank() && !password.isNullOrBlank()
             if (isRequired) {
-                useInMemoryPgpKeys(signingKey, signingPassword)
-                sign(extensions.getByType<PublishingExtension>().publications)
+                useInMemoryPgpKeys(key, password)
+                sign(module.extensions.getByType<PublishingExtension>().publications)
             }
         }
     }
