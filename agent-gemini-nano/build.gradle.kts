@@ -1,4 +1,9 @@
-plugins { alias(libs.plugins.android.library) }
+description = "Gemini Nano / ML Kit Agent API adapter for the SunMobile AI Agent SDK."
+
+plugins {
+    alias(libs.plugins.android.library)
+}
+
 android {
     namespace = "com.sunmobile.aiagent.gemininano"
     compileSdk {
@@ -7,7 +12,14 @@ android {
         }
     }
     defaultConfig { minSdk = 26 }
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
+
 dependencies {
     api(project(":agent-core"))
     implementation(libs.mlkit.genai.agent)
