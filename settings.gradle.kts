@@ -7,4 +7,4 @@ dependencyResolutionManagement {
     repositories { google(); mavenCentral() }
 }
 rootProject.name = "SunMobileAiAgentSdk"
-include(":agent-core", ":agent-adk", ":agent-firebase", ":agent-litertlm", ":agent-gemini-nano", ":sample-app")
+include(":agent-core", ":agent-adk", ":agent-firebase", ":agent-litertlm", ":agent-mlkit", ":agent-gemini-nano", ":sample-app")
