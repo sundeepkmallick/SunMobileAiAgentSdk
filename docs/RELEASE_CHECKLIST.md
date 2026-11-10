@@ -1,6 +1,6 @@
 # Release readiness checklist
 
-This checklist is maintained honestly for the `0.1.0-rc.1` review candidate. A green compile/test workflow is not a substitute for runtime, security, legal or release-signing evidence. Do not publish a stable release while any required gate below remains open.
+This checklist is maintained honestly for the `0.1.0-rc.1` review candidate. No physical Android device is available for this validation cycle. We will keep the RC branch and may merge code/documentation gates that do not depend on physical hardware after review and required CI pass. Hardware-dependent checks remain explicitly deferred; merging to `main` is not stable-release approval. Do not publish stable `0.1.0` while any stable-release gate remains open.
 
 See [EMULATOR_AND_DEVICE_TESTING.md](EMULATOR_AND_DEVICE_TESTING.md) for the detailed emulator test plan, physical-device test matrix, evidence template and deferred release gates.
 
@@ -21,10 +21,40 @@ See [EMULATOR_AND_DEVICE_TESTING.md](EMULATOR_AND_DEVICE_TESTING.md) for the det
 - [x] User-reported emulator lifecycle scenarios passed: portrait → landscape → portrait, mock action after rotation and after resume, and repeated transitions without duplicate requests, ANRs or unexpected errors. See [2026-11-10 emulator evidence](validation/evidence/emulator-lifecycle-2026-11-10.md).
 - [ ] Action-correlated log review and sensitive-data/log-redaction review remain open; the latest grep returned no matching crash/error signatures, but the command transcript does not show a mock action between logcat clear and capture.
 
+## Merge-to-main scope without physical hardware
+
+The following work can be completed and reviewed without a physical Android device. Keep each item open until its own evidence exists; do not infer completion from emulator lifecycle success.
+
+- [ ] Finish source/API review and generate a public API and binary compatibility report.
+- [ ] Complete core/adapter unit, contract and mock-based tests; retain fresh test reports (avoid relying only on up-to-date or cached task output).
+- [ ] Complete independent source-level security review of tool policy, authorization boundaries, malformed inputs, cancellation, concurrency and error handling.
+- [ ] Complete privacy/logging review, including prompt/output/tool-argument redaction, retention, data minimization and session-clearing behavior.
+- [ ] Verify model provenance, official source, immutable revision, SHA-256 and license terms for every model artifact the project distributes or recommends. If model artifacts are not bundled/recommended, document that scope explicitly.
+- [ ] Run dependency vulnerability and license scans and record tool/database date, findings and disposition.
+- [ ] Validate R8/ProGuard consumer rules and release build configuration using CI/build tooling.
+- [ ] Review release signing configuration and reproducibility without committing or exposing keys.
+- [ ] Resolve documentation accuracy, sample behavior, host integration review and rollout/rollback documentation.
+- [ ] Ensure all applicable CI checks pass on the final PR head and obtain maintainer review/approval for merging code to main.
+
+**Merge boundary:** a reviewed merge to main may include the work above once completed, but it must preserve the explicit pending hardware-validation status below. Do not create a stable tag or publish stable artifacts as part of that merge.
+
+## Deferred: requires supported physical device(s)
+
+- [ ] Gemini Nano initialization, availability checks and inference on eligible physical devices.
+- [ ] LiteRT-LM model loading/inference, accelerator and fallback behavior on declared target hardware.
+- [ ] Firebase and ADK end-to-end integration on representative physical devices where device-specific behavior is part of the support claim.
+- [ ] Device-specific API/ABI, RAM/storage pressure and model download/storage behavior.
+- [ ] Real-device process death, background execution, cancellation/resource release, thermal behavior, sustained inference, battery impact and latency.
+- [ ] Validate the declared low-memory/entry-level device support claim.
+- [ ] Revalidate host-app user/order scope and sensitive BOPIS flow on actual target hardware.
+
+These are **deferred/not run**, not failed and not passed. The emulator API 37 ARM64 results do not substitute for them. Reopen this section when supported physical hardware becomes available.
+
 ## Required before stable 0.1.0
 
-- [ ] Emulator test plan executed and evidence recorded where the relevant backend/runtime is supported by the emulator. Emulator results do not replace physical-device tests.
-- [ ] Unit, contract and adapter runtime tests pass; add instrumentation and physical-device coverage for each supported backend.
+- [x] Emulator lifecycle scenarios exercised on API 37 / arm64-v8a and recorded in [2026-11-10 evidence](validation/evidence/emulator-lifecycle-2026-11-10.md). This does not qualify hardware-dependent backend support.
+- [ ] Emulator-supported backend/runtime tests and action-correlated log/privacy review completed where applicable.
+- [ ] Unit/contract/adapter test evidence refreshed and reviewed; physical-device instrumentation/backend coverage remains deferred as listed above.
 - [ ] Public API review and binary/API compatibility report completed and reviewed.
 - [ ] Firebase, LiteRT-LM and Gemini Nano support matrix confirmed on real supported devices and service/runtime versions.
 - [ ] Independent security review covers policy enforcement, bypass attempts, malformed inputs, cancellation, concurrency, lifecycle and error paths.
