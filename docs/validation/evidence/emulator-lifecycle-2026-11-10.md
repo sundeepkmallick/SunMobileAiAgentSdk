@@ -1,39 +1,71 @@
-# Emulator Lifecycle Validation
+# Emulator Lifecycle and Local Test Evidence
 
 Date: 2026-11-10
 SDK version: 0.1.0-rc.1
 Branch: release/0.1.0-rc.1
-Package: com.sunmobile.aiagent.sample
+Sample package: com.sunmobile.aiagent.sample
 
-## Environment
-Android API:
-ABI:
-Emulator:
-Available RAM:
-Available storage:
+## Emulator environment
 
-## Rotation
-- [ ] Portrait mock execution passed
-- [ ] Landscape transition passed
-- [ ] Return to portrait passed
-- [ ] No application crash
-- [ ] Mock action works after rotation
+- Emulator serial: `emulator-5554`
+- Emulator product/model: `sdk_gphone16k_arm64`
+- Android API: 37
+- ABI: `arm64-v8a`
+- Total RAM: 12,395,728 kB (~11.8 GiB)
+- Available RAM at capture: 9,849,232 kB (~9.4 GiB)
+- `/data` filesystem: 10 GiB total, 8.3 GiB used, 1.2 GiB available (~87% used)
 
-## Background / Foreground
-- [ ] Application backgrounds successfully
-- [ ] Application resumes successfully
-- [ ] No duplicate requests
-- [ ] Mock action works after resume
-- [ ] No unexpected resource errors
+**Storage note:** only about 1.2 GiB was available. Do not download or stage large model artifacts on this emulator until storage is reclaimed and rechecked.
 
-## Logs
-- [ ] No application FATAL EXCEPTION
-- [ ] No ANR
-- [ ] No OutOfMemoryError
-- [ ] No sensitive data exposed
+## Lifecycle smoke checks
+
+- [x] Sample app launch requested with `adb shell monkey -p com.sunmobile.aiagent.sample 1`; monkey reported one event injected.
+- [x] Activity observed as `RESUMED` and process alive after background/foreground smoke sequence.
+- [x] Earlier captured log interval contained no matching app crash signatures (`FATAL EXCEPTION`, `ANR in`, `OutOfMemoryError`, or `SecurityException`).
+- [ ] Portrait mock execution independently verified.
+- [ ] Landscape transition manually verified.
+- [ ] Return to portrait manually verified.
+- [ ] Mock action verified after rotation.
+- [ ] No duplicate requests verified after resume.
+- [ ] Mock action executed during the latest log-capture interval and corresponding logs reviewed.
+- [ ] Sensitive-data/log-redaction review completed.
+
+The latest attempt to capture logs cleared logcat and then captured it, but the explanatory shell comment was pasted into zsh as a command (`zsh: command not found: #`). The log capture therefore does **not** establish that a mock action was exercised during that interval. Repeat the capture while actually triggering the mock action in the app.
+
+## Core test results
+
+XML reports available under `agent-core/build/test-results/test/`:
+
+| Test suite | Tests | Failures | Errors | Skipped |
+|---|---:|---:|---:|---:|
+| AgentSessionTest | 1 | 0 | 0 | 0 |
+| ToolExecutorTest | 4 | 0 | 0 | 0 |
+| ToolRegistryTest | 3 | 0 | 0 | 0 |
+| **Total** | **8** | **0** | **0** | **0** |
+
+The XML report timestamps are 2026-11-09 and the reported `:agent-core:test` task was restored from Gradle cache. These results document the available test reports; they are not evidence that those tests freshly executed on 2026-11-10.
+
+## SDK and adapter Gradle checks
+
+Reported on 2026-11-10:
+
+- [x] `./gradlew test` — BUILD SUCCESSFUL; 78 actionable tasks, all up-to-date.
+- [x] `./gradlew :agent-adk:check` — BUILD SUCCESSFUL; 39 actionable tasks, 1 executed and 38 up-to-date.
+- [x] `./gradlew :agent-firebase:check` — BUILD SUCCESSFUL; 71 actionable tasks, 1 executed and 70 up-to-date.
+- [x] `./gradlew :agent-gemini-nano:check` — BUILD SUCCESSFUL; 39 actionable tasks, 1 executed and 38 up-to-date.
+- [x] `./gradlew :agent-litertlm:check` — BUILD SUCCESSFUL; 71 actionable tasks, 1 executed and 70 up-to-date.
+
+These are Gradle task/check results. Because most tasks were up-to-date, they do not by themselves prove fresh test execution, live backend connectivity, supported-device operation, model availability, or physical-device qualification.
 
 ## Result
-PASS / FAIL
 
-Evidence:
-Follow-up issues:
+**PARTIAL PASS — emulator smoke checks and Gradle checks are positive; lifecycle validation is not complete.**
+
+Rotation, mock-action behavior across rotation/resume, action-correlated log review, and physical-device/backend validation remain open.
+
+## Follow-up evidence required
+
+1. Manually rotate portrait → landscape → portrait and exercise the mock action before and after rotation.
+2. Clear logcat, trigger the mock action, save the resulting log, and review it for crashes, ANRs, memory errors, security exceptions, and sensitive data.
+3. Record whether output is expected to reset on Activity recreation; the sample currently does not save the displayed output across recreation.
+4. Continue with supported physical-device and backend-specific validation as described in the release checklist.
