@@ -12,9 +12,8 @@ This document describes local verification and the controlled Sonatype Central P
 | `:agent-litertlm` | `io.github.sundeepkmallick:agent-litertlm:0.1.0-rc.2` |
 | `:agent-mlkit` | `io.github.sundeepkmallick:agent-mlkit:0.1.0-rc.2` |
 | `:agent-gemini-nano` | `io.github.sundeepkmallick:agent-gemini-nano:0.1.0-rc.2` |
-| `:agent-gemini-nano` | `io.github.sundeepkmallick:agent-gemini-nano:0.1.0-rc.2` |
 
-The sample application is not published.
+The sample application is not published. `agent-gemini-nano` is retained as a legacy compatibility artifact; new Gemini Nano integrations should use `agent-mlkit`.
 
 ## Local build and verification
 
