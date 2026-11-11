@@ -1,19 +1,20 @@
 # Release readiness checklist
 
-This checklist is maintained honestly for the `0.1.0-rc.1` review candidate. No physical Android device is available for this validation cycle. We will keep the RC branch and may merge code/documentation gates that do not depend on physical hardware after review and required CI pass. Hardware-dependent checks remain explicitly deferred; merging to `main` is not stable-release approval. Do not publish stable `0.1.0` while any stable-release gate remains open.
+This checklist tracks the `0.1.0-rc.2` review candidate. Candidate CI and Maven-local publication verification have passed; physical-device Gemini Nano runtime validation remains open. No physical Android device is available for this validation cycle. We will keep the RC branch and may merge code/documentation gates that do not depend on physical hardware after review and required CI pass. Hardware-dependent checks remain explicitly deferred; merging to `main` is not stable-release approval. Do not publish stable `0.1.0` while any stable-release gate remains open.
 
 See [EMULATOR_AND_DEVICE_TESTING.md](EMULATOR_AND_DEVICE_TESTING.md) for the detailed emulator test plan, physical-device test matrix, evidence template and deferred release gates.
 
 ## Verified in the repository
 
-- [x] SDK CI on the current `main` commit passed: [run #137](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42604253210) (core unit tests and Android sample plus all adapter builds).
+- [x] SDK CI passed on candidate commit `dda83079008701987480abfc819e09c264fa2649`: [run #185](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42823069913) (core tests and Android sample/adapter builds, including `agent-mlkit`).
 - [x] Release-candidate CI passed on `release/0.1.0-rc.1`: [run #138](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42606063632) (core tests and sample/adapter builds). This is build/test evidence, not hardware runtime qualification.
 - [x] Adapter support matrix and known runtime limitations documented in [COMPATIBILITY.md](COMPATIBILITY.md).
 - [x] Tool-policy behavior has core unit coverage for deny, require-approval fail-closed behavior, malformed required arguments and allowed execution. This is test evidence, not an independent security review.
 - [x] Sample app labels its backend and research content as mocked/offline and makes no network calls; no credentials are present in the sample source.
 - [x] SunCommerzAssociate integration CI passed after the host test fix: [run #37](https://github.com/sundeepkmallick/SunCommerzAssociate/actions/runs/42601525623). The host PR remains draft and this does not establish device/runtime behavior.
 
-## Additional local validation reported on 2026-11-10
+- [x] Maven-local publication verification passed on candidate commit `dda83079008701987480abfc819e09c264fa2649`: [run #34](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42823069812). This is local package/signature verification only; it is not a Central upload or publication.
+\n## Additional local validation reported on 2026-11-10
 
 - [x] Local `./gradlew test` completed successfully (78 actionable tasks reported up-to-date).
 - [x] Local `:agent-adk:check`, `:agent-firebase:check`, `:agent-gemini-nano:check` and `:agent-litertlm:check` tasks completed successfully. Most tasks were up-to-date; these results do not prove live backend or supported-device integration.
@@ -70,10 +71,10 @@ These are **deferred/not run**, not failed and not passed. The emulator API 37 A
 ## Distribution and publication notes
 
 - The current SunCommerzAssociate integration consumes the SDK as a Git submodule plus Gradle composite build. Maven publication is not required for that integration.
-- No Maven publication, POM/sources/Javadoc artifact, signing setup, publication credential or stable release tag is created by this candidate PR.
+- The branch contains the RC2 Central staging workflow. No successful Central upload or final publication has been confirmed. Configure the `maven-central-staging` environment secrets, upload as a user-managed deployment, inspect validation and explicitly select Publish only after approval.
 - If Maven distribution is chosen later, add and review publication coordinates, POM metadata, source/Javadoc artifacts, signing, repository credentials and a separate publishing workflow before enabling it.
 - Do not commit credentials, signing keys, model weights or private model URLs.
 
 ## Release decision
 
-`0.1.0-rc.1` is a review candidate only. Do not publish it as stable or create the `v0.1.0` tag until every required gate above is evidenced and explicitly approved.
+`0.1.0-rc.2` is a review candidate only. Do not publish stable `0.1.0` or create a stable `v0.1.0` tag until every required gate above is evidenced and explicitly approved.
