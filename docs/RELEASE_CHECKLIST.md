@@ -1,6 +1,6 @@
 # Release readiness checklist
 
-This checklist tracks the `0.1.0-rc.2` review candidate. Candidate CI and Maven-local publication verification have passed; physical-device Gemini Nano runtime validation remains open. No physical Android device is available for this validation cycle. We will keep the RC branch and may merge code/documentation gates that do not depend on physical hardware after review and required CI pass. Hardware-dependent checks remain explicitly deferred; merging to `main` is not stable-release approval. Do not publish stable `0.1.0` while any stable-release gate remains open.
+This checklist tracks the `0.1.0-rc.2` release candidate, which has been published to Maven Central (deployment `282ed337-f336-411e-86c4-54daec62685f`). Physical-device Gemini Nano runtime validation and other stable-release qualification gates remain open. No physical Android device is available for this validation cycle. We will keep the RC branch and may merge code/documentation gates that do not depend on physical hardware after review and required CI pass. Hardware-dependent checks remain explicitly deferred; merging to `main` is not stable-release approval. Do not publish stable `0.1.0` while any stable-release gate remains open.
 
 See [EMULATOR_AND_DEVICE_TESTING.md](EMULATOR_AND_DEVICE_TESTING.md) for the detailed emulator test plan, physical-device test matrix, evidence template and deferred release gates.
 
@@ -13,7 +13,8 @@ See [EMULATOR_AND_DEVICE_TESTING.md](EMULATOR_AND_DEVICE_TESTING.md) for the det
 - [x] Sample app labels its backend and research content as mocked/offline and makes no network calls; no credentials are present in the sample source.
 - [x] SunCommerzAssociate integration CI passed after the host test fix: [run #37](https://github.com/sundeepkmallick/SunCommerzAssociate/actions/runs/42601525623). The host PR remains draft and this does not establish device/runtime behavior.
 
-- [x] Maven-local publication verification passed on candidate commit `dda83079008701987480abfc819e09c264fa2649`: [run #34](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42823069812). This is local package/signature verification only; it is not a Central upload or publication.
+- [x] Maven-local publication verification passed on candidate commit `dda83079008701987480abfc819e09c264fa2649`: [run #34](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42823069812).
+- [x] RC2 Central deployment `282ed337-f336-411e-86c4-54daec62685f` was reported by the release owner as `PUBLISHED`; all six component coordinates are listed in [MAVEN_PUBLICATION.md](MAVEN_PUBLICATION.md).
 \n## Additional local validation reported on 2026-11-10
 
 - [x] Local `./gradlew test` completed successfully (78 actionable tasks reported up-to-date).
