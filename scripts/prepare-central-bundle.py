@@ -19,12 +19,13 @@ import xml.etree.ElementTree as ET
 from zipfile import ZIP_DEFLATED, ZipFile
 
 GROUP = "io.github.sundeepkmallick"
-VERSION = "0.1.0-rc.1"
+VERSION = "0.1.0-rc.2"
 ARTIFACTS = (
     "agent-core",
     "agent-adk",
     "agent-firebase",
     "agent-litertlm",
+    "agent-mlkit",
     "agent-gemini-nano",
 )
 CHECKSUMS = ("md5", "sha1", "sha256", "sha512")

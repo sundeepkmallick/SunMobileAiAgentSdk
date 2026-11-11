@@ -13,9 +13,10 @@ android {
 }
 
 dependencies {
-    implementation("io.github.sundeepkmallick:agent-core:0.1.0-rc.1")
-    implementation("io.github.sundeepkmallick:agent-adk:0.1.0-rc.1")
-    implementation("io.github.sundeepkmallick:agent-firebase:0.1.0-rc.1")
-    implementation("io.github.sundeepkmallick:agent-litertlm:0.1.0-rc.1")
-    implementation("io.github.sundeepkmallick:agent-gemini-nano:0.1.0-rc.1")
+    implementation("io.github.sundeepkmallick:agent-core:0.1.0-rc.2")
+    implementation("io.github.sundeepkmallick:agent-adk:0.1.0-rc.2")
+    implementation("io.github.sundeepkmallick:agent-firebase:0.1.0-rc.2")
+    implementation("io.github.sundeepkmallick:agent-litertlm:0.1.0-rc.2")
+    implementation("io.github.sundeepkmallick:agent-mlkit:0.1.0-rc.2")
+    implementation("io.github.sundeepkmallick:agent-gemini-nano:0.1.0-rc.2")
 }

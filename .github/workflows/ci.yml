@@ -70,4 +70,4 @@ jobs:
           echo "Unable to initialize Gradle after 3 attempts."
           exit 1
       - name: Build offline Android sample
-        run: ./gradlew --no-daemon :sample-app:assembleDebug :agent-adk:assembleDebug :agent-firebase:assembleDebug :agent-litertlm:assembleDebug :agent-gemini-nano:assembleDebug
+        run: ./gradlew --no-daemon :sample-app:assembleDebug :agent-adk:assembleDebug :agent-firebase:assembleDebug :agent-litertlm:assembleDebug :agent-mlkit:assembleDebug :agent-gemini-nano:assembleDebug

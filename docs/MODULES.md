@@ -8,7 +8,8 @@
 | `:agent-adk` | Google ADK runner, in-memory sessions, streaming/event translation and dynamic Toolset bridge for core tools | Google ADK Kotlin Android 1.0.0 |
 | `:agent-firebase` | Firebase AI Logic model factory for the shared ADK provider | Host-initialized FirebaseApp; ADK Firebase integration |
 | `:agent-litertlm` | LiteRT-LM model factory for an already-installed model file | ADK LiteRT-LM integration and LiteRT-LM 0.13.1 |
-| `:agent-gemini-nano` | ML Kit Agent API backend using host-declared AppFunctions | ML Kit Agent API alpha1 / GenAI Prompt beta5; no dynamic SDK tools |
+| `:agent-mlkit` | First-class ML Kit GenAI Agent + Prompt backend using host-declared AppFunctions | ML Kit Agent API alpha1 / GenAI Prompt beta5; no dynamic SDK tools |
+| `:agent-gemini-nano` | Legacy adapter retained for compatibility | Same ML Kit APIs; new consumers should use `:agent-mlkit` |
 | `:sample-app` | Offline Android Research Assistant using explicitly labelled mock data | Android and `:agent-core`; no network calls |
 
 ## Backend usage
@@ -23,7 +24,7 @@ Create a `LiteRtLmModelFactory` with the installed model file, cache directory a
 
 ### Gemini Nano
 
-`GeminiNanoAgentBackendProvider` uses ML Kit Agent API and enables AppFunctions. It deliberately rejects a non-empty core ToolRegistry: AppFunctions are declared and implemented by the host app, not dynamically registered by this SDK. Every AppFunction must independently enforce caller identity, permission, consent and business authorization; SDK AgentPolicy does not intercept framework-dispatched AppFunctions. The provider defaults to Android API 36 minimum and checks runtime availability. This backend should not be treated as an interchangeable ADK model or as a durable multi-turn session.
+`GeminiNanoAgentBackendProvider` in `agent-mlkit` uses ML Kit Agent API and enables AppFunctions. It deliberately rejects a non-empty core ToolRegistry: AppFunctions are declared and implemented by the host app, not dynamically registered by this SDK. Every AppFunction must independently enforce caller identity, permission, consent and business authorization; SDK AgentPolicy does not intercept framework-dispatched AppFunctions. The provider defaults to Android API 36 minimum and checks runtime availability. This backend should not be treated as an interchangeable ADK model or as a durable multi-turn session.
 
 ## Host application responsibilities
 
@@ -33,4 +34,4 @@ See [SunCommerzAssociate Migration](SUNCOMMERZ_MIGRATION.md) for the integration
 
 ## Validation status
 
-SDK CI run [#123](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42594131318) passed core unit tests and compiled the sample and all adapter modules. This is not physical-device or production validation. The host integration PR #4 remains draft and its latest Android CI run failed two `LocalModelCompatibilityTest` cases. See [Compatibility](COMPATIBILITY.md) for the evidence and outstanding gates.
+On candidate commit `dda83079008701987480abfc819e09c264fa2649`, SDK CI run [#185](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42823069913) passed and Maven publication verification run [#34](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42823069812) passed. These checks do not prove physical-device Gemini Nano behavior. SunCommerzAssociate PR #4 remains draft; its user-reported local composite-build app assemble and unit-test invocation completed successfully. See [Compatibility](COMPATIBILITY.md) and [Release Checklist](RELEASE_CHECKLIST.md) for remaining gates.

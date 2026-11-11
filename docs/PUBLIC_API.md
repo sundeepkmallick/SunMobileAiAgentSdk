@@ -1,6 +1,6 @@
-# Public API (0.1.0-rc.1 review candidate)
+# Public API (0.1.0-rc.2 review candidate)
 
-The public API is experimental in this 0.1.0-rc.1 review candidate. SDK CI verifies compilation and core unit tests, but device/runtime validation, independent binary/API compatibility review and production qualification are not complete. Do not treat this candidate as a stable compatibility promise.
+The public API is experimental in this `0.1.0-rc.2` review candidate. SDK CI verifies compilation and core unit tests, but device/runtime validation, independent binary/API compatibility review and production qualification are not complete. Do not treat this candidate as a stable compatibility promise. The current candidate CI compiles the new `agent-mlkit` module and validates its configuration tests; this is not a physical-device Gemini Nano test.
 
 ## Create and execute an agent
 
@@ -32,7 +32,7 @@ Implement `AgentTool` with a stable `ToolDefinition` and JSON object parameter s
 
 - Firebase and LiteRT-LM use `AdkAgentBackendProvider` with their respective model factories and the shared dynamic core-tool bridge.
 - LiteRT-LM accepts a host-installed model file only; model download, integrity, licensing and device admission remain host responsibilities.
-- Gemini Nano uses host-declared AppFunctions and rejects dynamic SDK tools. Each AppFunction must independently authorize and validate its invocation; AgentPolicy does not secure framework-dispatched AppFunctions.
+- `agent-mlkit` provides `GeminiNanoAgentBackendProvider` and `GeminiNanoConfiguration`, checks model readiness through the Prompt API, and uses host-declared AppFunctions. It rejects dynamic SDK tools. Each AppFunction must independently authorize and validate its invocation; AgentPolicy does not secure framework-dispatched AppFunctions.
 
 ## Compatibility policy
 
