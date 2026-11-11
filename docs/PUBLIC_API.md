@@ -1,6 +1,6 @@
 # Public API (0.1.0-rc.2 review candidate)
 
-The public API is experimental in this 0.1.0-rc.1 review candidate. SDK CI verifies compilation and core unit tests, but device/runtime validation, independent binary/API compatibility review and production qualification are not complete. Do not treat this candidate as a stable compatibility promise.
+The public API is experimental in this `0.1.0-rc.2` review candidate. SDK CI verifies compilation and core unit tests, but device/runtime validation, independent binary/API compatibility review and production qualification are not complete. Do not treat this candidate as a stable compatibility promise. The current candidate CI compiles the new `agent-mlkit` module and validates its configuration tests; this is not a physical-device Gemini Nano test.
 
 ## Create and execute an agent
 
