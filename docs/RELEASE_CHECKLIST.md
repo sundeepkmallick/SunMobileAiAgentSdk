@@ -70,9 +70,9 @@ These are **deferred/not run**, not failed and not passed. The emulator API 37 A
 
 ## Distribution and publication notes
 
-- The current SunCommerzAssociate integration consumes the SDK as a Git submodule plus Gradle composite build. Maven publication is not required for that integration.
+- SunCommerzAssociate can use the sibling SDK checkout through Gradle composite build during development. Its Maven Central mode requires all declared RC2 artifacts, including `agent-mlkit`, to be published and independently resolved.
 - The branch contains the RC2 Central staging workflow. No successful Central upload or final publication has been confirmed. Configure the `maven-central-staging` environment secrets, upload as a user-managed deployment, inspect validation and explicitly select Publish only after approval.
-- If Maven distribution is chosen later, add and review publication coordinates, POM metadata, source/Javadoc artifacts, signing, repository credentials and a separate publishing workflow before enabling it.
+- Before RC2 staging upload, configure the protected Central staging credentials and PGP signing key; run the six-module package/signature verification and inspect the generated bundle. After upload, wait for Central validation and manually inspect all six components before choosing Publish.
 - Do not commit credentials, signing keys, model weights or private model URLs.
 
 ## Release decision
