@@ -2,7 +2,7 @@
 
 A reusable Kotlin/Android agent SDK that separates backend-neutral agent infrastructure from host-application business logic.
 
-> **Status: 0.1.0-rc.2 review candidate (not a stable release).** The core API, ADK/Firebase/LiteRT-LM/Gemini Nano adapters, offline sample and CI are implemented. SDK CI on `main` passed core unit tests and compiles the sample plus all adapter modules ([run #137](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42604253210)). SunCommerzAssociate integration CI passed after its unit-test fix ([host run #37](https://github.com/sundeepkmallick/SunCommerzAssociate/actions/runs/42601525623)); its PR remains draft. Physical-device/runtime validation, independent security and privacy reviews, API/binary compatibility review, model provenance/license verification and stable-release qualification remain outstanding.
+> **Status: `0.1.0-rc.2` release candidate (not stable; not yet published).** The candidate includes the `agent-mlkit` module. SDK CI passed on candidate commit `dda83079008701987480abfc819e09c264fa2649` ([run #185](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42823069913)); Maven-local publication verification passed ([run #34](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42823069812)). These are build/package checks, not physical-device Gemini Nano qualification. Independent security/privacy review, API/binary compatibility, dependency/license review and model provenance remain open.
 
 ## Modules
 
@@ -38,12 +38,12 @@ See [Modules](docs/MODULES.md), [Public API](docs/PUBLIC_API.md) and [Tool Devel
 
 ## SunCommerzAssociate integration
 
-The integration is implemented in [SunCommerzAssociate PR #4](https://github.com/sundeepkmallick/SunCommerzAssociate/pull/4), which remains a draft. Its latest observed Android CI run passed app compilation and unit tests ([run #37](https://github.com/sundeepkmallick/SunCommerzAssociate/actions/runs/42601525623)). PR #4 currently consumes the already-published SDK modules and still owns Gemini Nano through its direct ML Kit + AppFunctions implementation. The new `agent-mlkit` artifact is a separate release-candidate deliverable; PR #4 must not add it until the `0.1.0-rc.2` artifact is successfully published and independently resolvable.
+The integration is implemented in [SunCommerzAssociate PR #4](https://github.com/sundeepkmallick/SunCommerzAssociate/pull/4), which remains a draft. It declares `agent-core`, `agent-adk`, `agent-firebase`, `agent-litertlm` and `agent-mlkit` at `0.1.0-rc.2`. For development, Gradle composite substitution resolves these from the sibling SDK checkout; the Maven Central dependency path requires publication of the six RC2 artifacts first. The host keeps AppFunctions declarations, KSP/compiler processing, manifest registration, service implementation and business authorization. The latest user-reported local composite-build assemble and unit-test invocation completed successfully; device/runtime validation remains outstanding.
 
 - Firebase AI Logic and LiteRT-LM use the SDK's ADK runner, registry, schema validation and policy executor.
 - BOPIS tools, instructions, repositories, identity/order scoping, fallback, approval and UI remain host-owned.
 - The host supplies product, store, quantity and radius scope; tools are read-only and the host revalidates current inventory before approval.
-- The planned migration replaces the host's direct ML Kit Agent/Prompt calls with `agent-mlkit` only after Maven Central publication. AppFunctions declarations and service implementation remain host-owned; their authorization is not intercepted by SDK AgentPolicy.
+- Gemini Nano uses the SDK `agent-mlkit` provider. AppFunctions declarations and service implementation remain host-owned; their authorization is not intercepted by SDK AgentPolicy.
 - The host retains model download/catalogue/checksum/device admission and serializes LiteRT-LM model lifecycle.
 
 A green host CI run proves compile/unit-test success only. Device validation, Firebase credential/App Check runtime tests, Gemini Nano/AppFunctions behavior and production rollout review remain outstanding. See the [migration guide](docs/SUNCOMMERZ_MIGRATION.md) and [roadmap](docs/ROADMAP.md).
@@ -71,7 +71,7 @@ The latest successful SDK workflow on `main` is [CI run #137](https://github.com
 
 ## Maven publication candidate
 
-All five SDK modules have a local-only Maven publication setup for `0.1.0-rc.1` under group `io.github.sundeepkmallick`. The namespace is verified in Sonatype Central. The current build still publishes to `mavenLocal()` only; remote publishing configuration and credentials are not yet enabled, and no stable `0.1.0` tag is configured. See [Maven publication guide](docs/MAVEN_PUBLICATION.md) for artifact coordinates, signing configuration, local verification and an independent consumer fixture.
+All six SDK library modules have Maven publication metadata for `0.1.0-rc.2` under `io.github.sundeepkmallick`. The branch provides a manually dispatched, signed, user-managed Sonatype Central staging workflow. A successful staging upload is not final publication: review Central validation and each component, then explicitly publish only after release approval. See [Maven publication guide](docs/MAVEN_PUBLICATION.md).
 
 ## Documentation
 
