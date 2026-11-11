@@ -9,8 +9,8 @@ This document separates build evidence from runtime/device support. A successful
 | JDK | 17 | Used by SDK CI |
 | Google ADK Kotlin | 1.0.0 | Adapter modules compile in SDK CI |
 | LiteRT-LM | 0.13.1 | Adapter module compiles; device/runtime tests pending |
-| ML Kit Agent API | 1.0.0-alpha1 | Gemini Nano adapter compiles; eligible-device tests pending |
-| ML Kit GenAI Prompt | 1.0.0-beta5 | Dependency baseline; device/runtime tests pending |
+| ML Kit Agent API | 1.0.0-alpha1 | `agent-mlkit` compiles in RC2 CI; eligible-device tests pending |
+| ML Kit GenAI Prompt | 1.0.0-beta5 | `agent-mlkit` compiles in RC2 CI; readiness/runtime tests pending |
 | Android | SDK modules use minSdk 26; Gemini Nano provider defaults to API 36 minimum | Sample and adapters compile against CI Android SDK; no device matrix claimed |
 | Gradle / AGP / Kotlin | Versions pinned in Gradle wrapper and version catalog | SDK CI completes successfully |
 
@@ -48,4 +48,4 @@ Gemini Nano availability depends on supported device/runtime conditions. AppFunc
 
 No supported physical-device Gemini Nano runtime evidence has been recorded for this `0.1.0-rc.2` candidate. The API 37 / arm64-v8a emulator lifecycle evidence is useful emulator evidence only; it does not establish support for Gemini Nano, LiteRT-LM inference, Firebase/ADK end-to-end device behavior, thermal/battery performance or low-memory hardware.
 
-The team may finish non-hardware work on release/0.1.0-rc.1 and merge reviewed changes to main after applicable CI and maintainer review. Keep physical-device backend qualification explicitly **DEFERRED / NOT RUN**. Do not claim those backends/device classes are validated or publish stable 0.1.0 based solely on the emulator and build evidence. Revisit this matrix when supported physical hardware becomes available.
+The team may finish non-hardware work on the RC2 feature branch and review it before any merge decision. Keep physical-device backend qualification explicitly **DEFERRED / NOT RUN**. Do not claim those backends/device classes are validated or publish stable 0.1.0 based solely on the emulator and build evidence. Revisit this matrix when supported physical hardware becomes available.
