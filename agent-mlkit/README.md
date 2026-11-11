@@ -6,11 +6,11 @@ Gemini Nano backend for SunMobileAiAgentSdk, implemented with Google's ML Kit Ge
 
 ```kotlin
 dependencies {
-    implementation("io.github.sundeepkmallick:agent-mlkit:<published-version>")
+    implementation("io.github.sundeepkmallick:agent-mlkit:0.1.0-rc.2")
 }
 ```
 
-The artifact depends on `agent-core`; ML Kit Agent and Prompt implementation dependencies are internal and are not exposed in the public API.
+The RC2 coordinate becomes resolvable from Maven Central only after this version is successfully published. Until then, use the SDK composite build or publish the SDK to `mavenLocal()` for local development. The artifact depends on `agent-core`; ML Kit Agent and Prompt implementation dependencies are internal and are not exposed in the public API.
 
 ## Usage
 
