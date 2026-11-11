@@ -34,4 +34,4 @@ See [SunCommerzAssociate Migration](SUNCOMMERZ_MIGRATION.md) for the integration
 
 ## Validation status
 
-SDK CI run [#123](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42594131318) passed core unit tests and compiled the sample and all adapter modules. This is not physical-device or production validation. The host integration PR #4 remains draft and its latest Android CI run failed two `LocalModelCompatibilityTest` cases. See [Compatibility](COMPATIBILITY.md) for the evidence and outstanding gates.
+On candidate commit `dda83079008701987480abfc819e09c264fa2649`, SDK CI run [#185](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42823069913) passed and Maven publication verification run [#34](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42823069812) passed. These checks do not prove physical-device Gemini Nano behavior. SunCommerzAssociate PR #4 remains draft; its user-reported local composite-build app assemble and unit-test invocation completed successfully. See [Compatibility](COMPATIBILITY.md) and [Release Checklist](RELEASE_CHECKLIST.md) for remaining gates.
