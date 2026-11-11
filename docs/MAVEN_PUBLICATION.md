@@ -15,16 +15,27 @@ This document describes local verification and the controlled Sonatype Central P
 
 The sample application is not published. `agent-gemini-nano` is retained as a legacy compatibility artifact; new Gemini Nano integrations should use `agent-mlkit`.
 
-## Local build and verification
+## Local build, signature verification and optional upload
 
-Requires JDK 17 and an installed Android SDK matching the project compile SDK.
+Requires JDK 17, an installed Android SDK matching the project compile SDK, Python 3 and GnuPG. Keep the Portal user token and private signing key in a password manager or other secure secret store. Do not commit them or paste them into chat.
+
+Export the secrets into the current shell from your secure store. `SIGNING_KEY` must contain the ASCII-armored private key; `SIGNING_PASSWORD` is its passphrase. The following commands assume those four environment variables are already set:
 
 ```bash
-./gradlew publishSdkToMavenLocal
-python3 scripts/verify-maven-local.py
+./gradlew --no-daemon publishSdkToMavenLocal
+VERIFY_MAVEN_SIGNATURES=true python3 scripts/verify-maven-local.py
+python3 scripts/prepare-central-bundle.py --bundle build/central-bundle.zip
 ```
 
-The local publication task writes only to `mavenLocal()`. The verification script checks all six POM coordinates and metadata and requires source and Javadoc JARs. It does not contact a remote repository.
+The first task writes only to `mavenLocal()`. Verification checks all six POM coordinates, metadata, primary binaries, source/Javadoc JARs and, when `VERIFY_MAVEN_SIGNATURES=true`, cryptographically verifies each detached PGP signature using the supplied public key imported into a temporary GnuPG home. Bundle preparation checks the Maven layout and required files. Neither command contacts Sonatype.
+
+After reviewing the generated bundle, the following command uploads it as a **user-managed staging deployment**:
+
+```bash
+python3 scripts/prepare-central-bundle.py --bundle build/central-bundle.zip --upload
+```
+
+This contacts Sonatype using `MAVEN_CENTRAL_USERNAME` and `MAVEN_CENTRAL_PASSWORD`. Do not run it until you are ready to upload this immutable RC2 candidate for Central validation.
 
 ## Sonatype Central staging upload
 
@@ -34,7 +45,7 @@ Sonatype does not currently provide an official Gradle plugin for the Central Pu
 - [Central Portal Publisher API](https://central.sonatype.org/publish/publish-portal-api/)
 - [Central publishing requirements](https://central.sonatype.org/publish/requirements/)
 
-The manually dispatched workflow is `.github/workflows/maven-central-upload.yml`. It requires the exact confirmation string `UPLOAD-0.1.0-rc.2`, builds and signs all six publications, validates required POM metadata and signatures, creates checksums, retains the bundle as a workflow artifact, and uploads it with `publishingType=USER_MANAGED`.
+The manually dispatched workflow is `.github/workflows/maven-central-upload.yml`. It performs the same local signing, cryptographic signature verification, bundle validation and user-managed upload steps. It requires the exact confirmation string `UPLOAD-0.1.0-rc.2`, builds and signs all six publications, validates required POM metadata and signatures, creates checksums, retains the bundle as a workflow artifact, and uploads it with `publishingType=USER_MANAGED`.
 
 **This upload does not publish to Maven Central.** After the upload, Sonatype validates the deployment. A maintainer must inspect the deployment in the Central Portal and explicitly select Publish. The workflow never calls the publish endpoint and never uses automatic publishing.
 
