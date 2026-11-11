@@ -21,11 +21,11 @@ The current `main` commit `2eb3d6db4759cc855f5853e6a0962d698c1a8647` passed [CI 
 - `core-tests`: passed, including `:agent-core:test`.
 - `sample-build`: passed, including `:sample-app:assembleDebug`, `:agent-adk:assembleDebug`, `:agent-firebase:assembleDebug`, `:agent-litertlm:assembleDebug` and `:agent-gemini-nano:assembleDebug`.
 
-The `0.1.0-rc.1` candidate branch is subject to its own PR workflow. The main-branch result above is baseline evidence, not a substitute for candidate-commit checks.
+The `0.1.0-rc.2` candidate commit `dda83079008701987480abfc819e09c264fa2649` passed SDK CI [run #185](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42823069913) and Maven-local publication verification [run #34](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42823069812). This validates CI build/test and local publication packaging only, not physical-device behavior.
 
 ## SunCommerzAssociate integration status
 
-[SunCommerzAssociate PR #4](https://github.com/sundeepkmallick/SunCommerzAssociate/pull/4) remains a draft. After the `LocalModelCompatibilityTest` corrections, the latest host workflow [run #37](https://github.com/sundeepkmallick/SunCommerzAssociate/actions/runs/42601525623) passed on commit `784fa34033bbe081988568bebe9a337e676b8f22`. This is compile/unit-test evidence only; it does not validate physical devices, Firebase credentials/App Check, Gemini Nano service availability, AppFunctions dispatch or model performance.
+[SunCommerzAssociate PR #4](https://github.com/sundeepkmallick/SunCommerzAssociate/pull/4) remains draft. The user reported that `:app:assembleDebug :app:testDebugUnitTest` completed successfully with the local SDK composite build. This local result does not validate physical devices, Firebase credentials/App Check, Gemini Nano service availability, AppFunctions dispatch or model performance.
 
 ## Required runtime/device evidence
 
@@ -46,6 +46,6 @@ Gemini Nano availability depends on supported device/runtime conditions. AppFunc
 
 ## Current release-candidate hardware constraint
 
-No physical Android device is available for the current 0.1.0-rc.1 validation cycle. The API 37 / arm64-v8a emulator lifecycle evidence is useful emulator evidence only; it does not establish support for Gemini Nano, LiteRT-LM inference, Firebase/ADK end-to-end device behavior, thermal/battery performance or low-memory hardware.
+No supported physical-device Gemini Nano runtime evidence has been recorded for this `0.1.0-rc.2` candidate. The API 37 / arm64-v8a emulator lifecycle evidence is useful emulator evidence only; it does not establish support for Gemini Nano, LiteRT-LM inference, Firebase/ADK end-to-end device behavior, thermal/battery performance or low-memory hardware.
 
 The team may finish non-hardware work on release/0.1.0-rc.1 and merge reviewed changes to main after applicable CI and maintainer review. Keep physical-device backend qualification explicitly **DEFERRED / NOT RUN**. Do not claim those backends/device classes are validated or publish stable 0.1.0 based solely on the emulator and build evidence. Revisit this matrix when supported physical hardware becomes available.
