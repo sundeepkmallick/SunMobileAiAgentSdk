@@ -2,7 +2,7 @@
 
 A reusable Kotlin/Android agent SDK that separates backend-neutral agent infrastructure from host-application business logic.
 
-> **Status: `0.1.0-rc.2` release candidate (not stable; not yet published).** The candidate includes the `agent-mlkit` module. SDK CI passed on candidate commit `dda83079008701987480abfc819e09c264fa2649` ([run #185](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42823069913)); Maven-local publication verification passed ([run #34](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42823069812)). These are build/package checks, not physical-device Gemini Nano qualification. Independent security/privacy review, API/binary compatibility, dependency/license review and model provenance remain open.
+> **Published release: `0.1.0-rc.2` (release candidate, not stable).** All six SDK artifacts, including `agent-mlkit`, are published to Maven Central under `io.github.sundeepkmallick`. See [Maven publication and release paths](docs/MAVEN_PUBLICATION.md) for published coordinates, local verification, bundle generation, upload, Central validation and final publication steps. Physical-device Gemini Nano qualification and independent security/privacy, API/binary compatibility, dependency/license and model provenance reviews remain separate gates.
 
 ## Modules
 
@@ -38,7 +38,7 @@ See [Modules](docs/MODULES.md), [Public API](docs/PUBLIC_API.md) and [Tool Devel
 
 ## SunCommerzAssociate integration
 
-The integration is implemented in [SunCommerzAssociate PR #4](https://github.com/sundeepkmallick/SunCommerzAssociate/pull/4), which remains a draft. It declares `agent-core`, `agent-adk`, `agent-firebase`, `agent-litertlm` and `agent-mlkit` at `0.1.0-rc.2`. For development, Gradle composite substitution resolves these from the sibling SDK checkout; the Maven Central dependency path requires publication of the six RC2 artifacts first. The host keeps AppFunctions declarations, KSP/compiler processing, manifest registration, service implementation and business authorization. The latest user-reported local composite-build assemble and unit-test invocation completed successfully; device/runtime validation remains outstanding.
+The integration is implemented in [SunCommerzAssociate PR #4](https://github.com/sundeepkmallick/SunCommerzAssociate/pull/4), which remains a draft. It declares `agent-core`, `agent-adk`, `agent-firebase`, `agent-litertlm` and `agent-mlkit` at `0.1.0-rc.2`. For normal use, Gradle resolves the published RC2 artifacts from Maven Central. For development, Gradle composite substitution resolves them from the sibling SDK checkout; Maven Local is also supported. The host keeps AppFunctions declarations, KSP/compiler processing, manifest registration, service implementation and business authorization. The latest user-reported local composite-build assemble and unit-test invocation completed successfully; device/runtime validation remains outstanding.
 
 - Firebase AI Logic and LiteRT-LM use the SDK's ADK runner, registry, schema validation and policy executor.
 - BOPIS tools, instructions, repositories, identity/order scoping, fallback, approval and UI remain host-owned.
@@ -69,9 +69,9 @@ Requires JDK 17; an Android SDK is required for Android modules and the sample.
 
 The latest successful SDK workflow on `main` is [CI run #137](https://github.com/sundeepkmallick/SunMobileAiAgentSdk/actions/runs/42604253210). It passed core unit tests and compiled the sample plus all adapter modules. The candidate branch has its own PR CI gate; see the PR checks before approving it. This evidence does not establish device/runtime behavior, production readiness or full host-app regression success.
 
-## Maven publication candidate
+## Maven Central publication
 
-All six SDK library modules have Maven publication metadata for `0.1.0-rc.2` under `io.github.sundeepkmallick`. The branch provides a manually dispatched, signed, user-managed Sonatype Central staging workflow. A successful staging upload is not final publication: review Central validation and each component, then explicitly publish only after release approval. See [Maven publication guide](docs/MAVEN_PUBLICATION.md).
+All six SDK library modules at `0.1.0-rc.2` are published under `io.github.sundeepkmallick`. The repository documents the exact SDK-root commands and paths for Maven-local publication, signature verification, Central bundle preparation, user-managed upload, deployment validation and explicit final Publish. See [Maven publication and release paths](docs/MAVEN_PUBLICATION.md).
 
 ## Documentation
 
